@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
-import z from "zod";
-import { createUrlSchema } from "@/app/lib/validators/url";
 import { prisma } from "@/app/lib/prisma";
+import { HttpStatus } from "../lib/enums";
 
 export async function GET(
   request: Request,
@@ -9,20 +8,24 @@ export async function GET(
 ) {
   try {
     const { shortcode } = await params;
-    const update = await prisma.url.findUnique({})
-    const url = await prisma.url.findUnique({
+    const url = await prisma.url.update({
       where: {
         shortCode: shortcode,
       },
+      data: {
+        clicks: {
+          increment: 1,
+        },
+      },
       select: {
         originalUrl: true,
+        clicks: true,
       },
     });
-    // const { originalUrl } = originalUrl;
     if (!url) {
       return NextResponse.json(
         { success: false, message: "Url doesnt exist" },
-        { status: 400 },
+        { status: HttpStatus.NOT_FOUND },
       );
     } else {
       return NextResponse.redirect(url.originalUrl);

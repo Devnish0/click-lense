@@ -19,7 +19,6 @@ model User{
 
   isGuest Boolean @default(true)
 
-  expiresAt DateTime?
 
   urls Url[]
   createdAt DateTime @default(now())
@@ -30,6 +29,8 @@ model Url{
   id String @id @default(cuid())
   originalUrl String
   shortCode String @unique
+
+  expiresAt DateTime?
 
   clicks Int @default(0)
 
