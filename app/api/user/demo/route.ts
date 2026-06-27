@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
 import { createDemoUser } from "@/app/lib/validators/user";
 import { cookies } from "next/headers";
-import { HttpStatus } from "@/app/lib/enums";
+import { HttpStatus } from "@/app/lib/httpStatus";
 import jwt from "jsonwebtoken";
 
 export async function POST(request: Request) {
@@ -12,8 +12,8 @@ export async function POST(request: Request) {
     throw new Error("jwt secret isnt loading");
   }
   try {
-    const data = request.json();
-    const parsedData = await createDemoUser.parse(data);
+    const data = await request.json();
+    const parsedData =  data
     if (typeof parsedData.isGuest === "boolean") {
       const id = await prisma.user.create({
         data: { isGuest: parsedData.isGuest },

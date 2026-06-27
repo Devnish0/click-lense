@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import z from "zod";
 import { createUrlSchema } from "@/app/lib/validators/url";
 import { prisma } from "@/app/lib/prisma";
-import { HttpStatus } from "@/app/lib/enums";
+import { HttpStatus } from "@/app/lib/httpStatus";
+import { handleApiError } from "@/app/lib/handleError";
 
 export async function POST(request: Request) {
   try {
@@ -14,22 +15,16 @@ export async function POST(request: Request) {
       data: {
         originalUrl: validateData.originalUrl,
         shortCode: validateData.slug,
-        userId: validateData.id,
+        userId: validateData.userId,
+        password: validateData?.password,
+        expiresAt: validateData?.expiresAt,
+        maxClicks: validateData?.maxClicks,
       },
     });
     return NextResponse.json({ url }, { status: HttpStatus.CREATED });
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: error.name },
-        { status: HttpStatus.INTERNAL_SERVER_ERROR },
-      );
-    }
-    console.log(error);
-    return NextResponse.json(
-      { error: "internal Service Error" },
-      { status: HttpStatus.INTERNAL_SERVER_ERROR },
-    );
+    console.log(error,"error from the url route")
+    return handleApiError(error);
   }
 }
 

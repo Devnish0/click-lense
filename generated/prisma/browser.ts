@@ -27,3 +27,8 @@ export type User = Prisma.UserModel
  * 
  */
 export type Url = Prisma.UrlModel
+/**
+ * Model playing_with_neon
+ * 
+ */
+export type playing_with_neon = Prisma.playing_with_neonModel

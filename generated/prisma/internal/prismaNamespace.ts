@@ -385,7 +385,8 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 export const ModelName = {
   User: 'User',
-  Url: 'Url'
+  Url: 'Url',
+  playing_with_neon: 'playing_with_neon'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -401,7 +402,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "url"
+    modelProps: "user" | "url" | "playing_with_neon"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -553,6 +554,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    playing_with_neon: {
+      payload: Prisma.$playing_with_neonPayload<ExtArgs>
+      fields: Prisma.playing_with_neonFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.playing_with_neonFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$playing_with_neonPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.playing_with_neonFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$playing_with_neonPayload>
+        }
+        findFirst: {
+          args: Prisma.playing_with_neonFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$playing_with_neonPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.playing_with_neonFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$playing_with_neonPayload>
+        }
+        findMany: {
+          args: Prisma.playing_with_neonFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$playing_with_neonPayload>[]
+        }
+        create: {
+          args: Prisma.playing_with_neonCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$playing_with_neonPayload>
+        }
+        createMany: {
+          args: Prisma.playing_with_neonCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.playing_with_neonCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$playing_with_neonPayload>[]
+        }
+        delete: {
+          args: Prisma.playing_with_neonDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$playing_with_neonPayload>
+        }
+        update: {
+          args: Prisma.playing_with_neonUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$playing_with_neonPayload>
+        }
+        deleteMany: {
+          args: Prisma.playing_with_neonDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.playing_with_neonUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.playing_with_neonUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$playing_with_neonPayload>[]
+        }
+        upsert: {
+          args: Prisma.playing_with_neonUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$playing_with_neonPayload>
+        }
+        aggregate: {
+          args: Prisma.Playing_with_neonAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePlaying_with_neon>
+        }
+        groupBy: {
+          args: Prisma.playing_with_neonGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Playing_with_neonGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.playing_with_neonCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Playing_with_neonCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -597,7 +672,6 @@ export const UserScalarFieldEnum = {
   email: 'email',
   password: 'password',
   isGuest: 'isGuest',
-  expiresAt: 'expiresAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -612,10 +686,22 @@ export const UrlScalarFieldEnum = {
   clicks: 'clicks',
   userId: 'userId',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  expiresAt: 'expiresAt',
+  maxClicks: 'maxClicks',
+  password: 'password'
 } as const
 
 export type UrlScalarFieldEnum = (typeof UrlScalarFieldEnum)[keyof typeof UrlScalarFieldEnum]
+
+
+export const Playing_with_neonScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  value: 'value'
+} as const
+
+export type Playing_with_neonScalarFieldEnum = (typeof Playing_with_neonScalarFieldEnum)[keyof typeof Playing_with_neonScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -822,6 +908,7 @@ export type PrismaClientOptions = ({
 export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
   url?: Prisma.UrlOmit
+  playing_with_neon?: Prisma.playing_with_neonOmit
 }
 
 /* Types for Logging */

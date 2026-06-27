@@ -10,4 +10,5 @@
  */
 export type * from './models/User'
 export type * from './models/Url'
+export type * from './models/playing_with_neon'
 export type * from './commonInputTypes'
