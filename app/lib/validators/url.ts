@@ -10,3 +10,16 @@ export const createUrlSchema = z.object({
 });
 
 export type createUrlSchema = z.infer<typeof createUrlSchema>;
+
+export const deleteUrlSchema = z.object({
+  id: z.string(),
+});
+
+export type deleteUrlSchema = z.infer<typeof deleteUrlSchema>;
+
+export const updateUrlSchema = z.object({
+  id: z.string(),
+  slug: z.string(),
+});
+
+export type updateUrlSchema = z.infer<typeof updateUrlSchema>;

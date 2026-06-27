@@ -6,18 +6,12 @@ import { handleApiResponse } from "./handleResponse";
 
 export async function handleApiError(error: unknown) {
   if (error instanceof ZodError) {
-    return NextResponse.json(
-      { message: "validation failed", errors: error.flatten().fieldErrors },
-      { status: HttpStatus.BAD_REQUEST },
-    );
+    return handleApiResponse(HttpStatus.BAD_REQUEST,"Validation failed",error.flatten().fieldErrors)
   }
   if (error instanceof Prisma.PrismaClientKnownRequestError) {
     switch (error.code) {
       case "P2002":
-        return NextResponse.json(
-          { message: "the code already exists" },
-          { status: HttpStatus.CONFLICT },
-        );
+        return handleApiResponse(HttpStatus.CONFLICT,"The code already exists")
     }
   }
   return handleApiResponse(HttpStatus.INTERNAL_SERVER_ERROR,"Something went wrong from the handleError.ts")
