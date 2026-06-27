@@ -59,7 +59,7 @@ model playing_with_neon {
   value Float? @db.Real
 }
 
-model Session {bun x auth@latest migrate
+model Session {
   id        String   @id
   expiresAt DateTime
   token     String

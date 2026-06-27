@@ -6,9 +6,15 @@ import { useState } from "react";
 export default function Home() {
   const { data: session, isPending } = authClient.useSession();
   const [loading, setLoading] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+  const [error, setError] = useState("");
 
   const handleGoogleSignIn = async () => {
     setLoading(true);
+    setError("");
     await authClient.signIn.social({
       provider: "google",
       callbackURL: "/",
@@ -16,8 +22,39 @@ export default function Home() {
     setLoading(false);
   };
 
+  const handleEmailAuth = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    try {
+      if (isSignUp) {
+        const { data, error: signUpErr } = await authClient.signUp.email({
+          email,
+          password,
+          name,
+        });
+        if (signUpErr) {
+          setError(signUpErr.message || "Failed to sign up");
+        }
+      } else {
+        const { data, error: signInErr } = await authClient.signIn.email({
+          email,
+          password,
+        });
+        if (signInErr) {
+          setError(signInErr.message || "Failed to sign in");
+        }
+      }
+    } catch (err: any) {
+      setError(err.message || "An unexpected error occurred");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSignOut = async () => {
     setLoading(true);
+    setError("");
     await authClient.signOut();
     setLoading(false);
   };
@@ -74,7 +111,91 @@ export default function Home() {
           </>
         ) : (
           <>
-            <p style={styles.text}>Not signed in</p>
+            <div style={styles.tabContainer}>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsSignUp(false);
+                  setError("");
+                }}
+                style={!isSignUp ? styles.activeTab : styles.tab}
+              >
+                Sign In
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsSignUp(true);
+                  setError("");
+                }}
+                style={isSignUp ? styles.activeTab : styles.tab}
+              >
+                Sign Up
+              </button>
+            </div>
+
+            <form onSubmit={handleEmailAuth} style={styles.form}>
+              {isSignUp && (
+                <div style={styles.inputGroup}>
+                  <label style={styles.inputLabel}>Name</label>
+                  <input
+                    type="text"
+                    placeholder="John Doe"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required
+                    style={styles.input}
+                  />
+                </div>
+              )}
+
+              <div style={styles.inputGroup}>
+                <label style={styles.inputLabel}>Email</label>
+                <input
+                  type="email"
+                  placeholder="you@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  style={styles.input}
+                />
+              </div>
+
+              <div style={styles.inputGroup}>
+                <label style={styles.inputLabel}>Password</label>
+                <input
+                  type="password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  style={styles.input}
+                />
+              </div>
+
+              {error && <p style={styles.errorText}>{error}</p>}
+
+              <button
+                type="submit"
+                disabled={loading}
+                style={{ ...styles.button, ...styles.submitButton }}
+              >
+                {loading
+                  ? isSignUp
+                    ? "Signing up..."
+                    : "Signing in..."
+                  : isSignUp
+                  ? "Sign Up"
+                  : "Sign In"}
+              </button>
+            </form>
+
+            <div style={styles.divider}>
+              <div style={styles.dividerLine}></div>
+              <span style={styles.dividerText}>or</span>
+              <div style={styles.dividerLine}></div>
+            </div>
+
             <button
               onClick={handleGoogleSignIn}
               disabled={loading}
@@ -201,5 +322,92 @@ const styles: Record<string, React.CSSProperties> = {
     background: "#262626",
     color: "#ededed",
     marginTop: "0.5rem",
+  },
+  tabContainer: {
+    display: "flex",
+    borderBottom: "1px solid #262626",
+    marginBottom: "1.5rem",
+    width: "100%",
+  },
+  tab: {
+    flex: 1,
+    background: "none",
+    border: "none",
+    borderBottom: "2px solid transparent",
+    color: "#666",
+    padding: "0.5rem 0",
+    cursor: "pointer",
+    fontSize: "0.9rem",
+    fontWeight: 500,
+    textAlign: "center" as const,
+    transition: "all 0.2s",
+  },
+  activeTab: {
+    flex: 1,
+    background: "none",
+    border: "none",
+    borderBottom: "2px solid #ededed",
+    color: "#ededed",
+    padding: "0.5rem 0",
+    cursor: "pointer",
+    fontSize: "0.9rem",
+    fontWeight: 600,
+    textAlign: "center" as const,
+    transition: "all 0.2s",
+  },
+  form: {
+    display: "flex",
+    flexDirection: "column" as const,
+    gap: "1rem",
+    width: "100%",
+    marginBottom: "1rem",
+  },
+  inputGroup: {
+    display: "flex",
+    flexDirection: "column" as const,
+    gap: "0.35rem",
+    width: "100%",
+  },
+  inputLabel: {
+    color: "#999",
+    fontSize: "0.75rem",
+    fontWeight: 500,
+  },
+  input: {
+    background: "#0a0a0a",
+    border: "1px solid #262626",
+    borderRadius: "8px",
+    padding: "0.6rem 0.8rem",
+    color: "#ededed",
+    fontSize: "0.9rem",
+    outline: "none",
+    transition: "border-color 0.2s",
+  },
+  submitButton: {
+    background: "#3b82f6",
+    color: "#fff",
+    marginTop: "0.5rem",
+  },
+  divider: {
+    display: "flex",
+    alignItems: "center",
+    width: "100%",
+    margin: "1rem 0",
+  },
+  dividerLine: {
+    flex: 1,
+    height: "1px",
+    background: "#262626",
+  },
+  dividerText: {
+    padding: "0 0.5rem",
+    fontSize: "0.8rem",
+    textTransform: "uppercase" as const,
+    color: "#666",
+  },
+  errorText: {
+    color: "#ef4444",
+    fontSize: "0.8rem",
+    textAlign: "center" as const,
   },
 };
