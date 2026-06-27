@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
-import z from "zod";
 import { createUrlSchema } from "@/app/lib/validators/url";
 import { prisma } from "@/app/lib/prisma";
 import { HttpStatus } from "@/app/lib/httpStatus";
 import { handleApiError } from "@/app/lib/handleError";
+import { handleApiResponse } from "@/app/lib/handleResponse";
+import {cookies} from 'next/headers';
+import jwt from "jsonwebtoken";
 
 export async function POST(request: Request) {
   try {
@@ -21,7 +23,7 @@ export async function POST(request: Request) {
         maxClicks: validateData?.maxClicks,
       },
     });
-    return NextResponse.json({ url }, { status: HttpStatus.CREATED });
+    return handleApiResponse( HttpStatus.CREATED,"url created successfully",{url})
   } catch (error) {
     console.log(error,"error from the url route")
     return handleApiError(error);
@@ -29,10 +31,24 @@ export async function POST(request: Request) {
 }
 
 export async function GET(request: Request) {
-  const data = { message: "Hello from the App Router API!" };
+  const cookieStore = await cookies();
+  const token = cookieStore.get("user_demo_token");
+  try{
+    if(token && process.env.JWT_SECRET){
+        const data = jwt.verify(token.value,process.env.JWT_SECRET!) as {
+          UserToken: {
+            id: string;
+          }
+        }
+        const userUrls = await prisma.url.findMany({
+          where:{
+            userId:data.UserToken.id
+          }
+        })
+        return handleApiResponse(HttpStatus.OK,"success",{userUrls})
+    }
 
-  const urls = await prisma.url.findMany();
-  console.log(urls);
-
-  return NextResponse.json({ urls }, { status: HttpStatus.OK });
+  }catch(error){
+    return handleApiError(error)
+  }
 }
