@@ -261,6 +261,7 @@ export type UrlWhereInput = {
   maxClicks?: Prisma.IntNullableFilter<"Url"> | number | null
   password?: Prisma.StringNullableFilter<"Url"> | string | null
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  clickEvents?: Prisma.ClickListRelationFilter
 }
 
 export type UrlOrderByWithRelationInput = {
@@ -275,6 +276,7 @@ export type UrlOrderByWithRelationInput = {
   maxClicks?: Prisma.SortOrderInput | Prisma.SortOrder
   password?: Prisma.SortOrderInput | Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
+  clickEvents?: Prisma.ClickOrderByRelationAggregateInput
 }
 
 export type UrlWhereUniqueInput = Prisma.AtLeast<{
@@ -292,6 +294,7 @@ export type UrlWhereUniqueInput = Prisma.AtLeast<{
   maxClicks?: Prisma.IntNullableFilter<"Url"> | number | null
   password?: Prisma.StringNullableFilter<"Url"> | string | null
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  clickEvents?: Prisma.ClickListRelationFilter
 }, "id" | "shortCode">
 
 export type UrlOrderByWithAggregationInput = {
@@ -339,6 +342,7 @@ export type UrlCreateInput = {
   maxClicks?: number | null
   password?: string | null
   user: Prisma.UserCreateNestedOneWithoutUrlsInput
+  clickEvents?: Prisma.ClickCreateNestedManyWithoutUrlInput
 }
 
 export type UrlUncheckedCreateInput = {
@@ -352,6 +356,7 @@ export type UrlUncheckedCreateInput = {
   expiresAt?: Date | string | null
   maxClicks?: number | null
   password?: string | null
+  clickEvents?: Prisma.ClickUncheckedCreateNestedManyWithoutUrlInput
 }
 
 export type UrlUpdateInput = {
@@ -365,6 +370,7 @@ export type UrlUpdateInput = {
   maxClicks?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutUrlsNestedInput
+  clickEvents?: Prisma.ClickUpdateManyWithoutUrlNestedInput
 }
 
 export type UrlUncheckedUpdateInput = {
@@ -378,6 +384,7 @@ export type UrlUncheckedUpdateInput = {
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   maxClicks?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clickEvents?: Prisma.ClickUncheckedUpdateManyWithoutUrlNestedInput
 }
 
 export type UrlCreateManyInput = {
@@ -477,6 +484,11 @@ export type UrlSumOrderByAggregateInput = {
   maxClicks?: Prisma.SortOrder
 }
 
+export type UrlScalarRelationFilter = {
+  is?: Prisma.UrlWhereInput
+  isNot?: Prisma.UrlWhereInput
+}
+
 export type UrlCreateNestedManyWithoutUserInput = {
   create?: Prisma.XOR<Prisma.UrlCreateWithoutUserInput, Prisma.UrlUncheckedCreateWithoutUserInput> | Prisma.UrlCreateWithoutUserInput[] | Prisma.UrlUncheckedCreateWithoutUserInput[]
   connectOrCreate?: Prisma.UrlCreateOrConnectWithoutUserInput | Prisma.UrlCreateOrConnectWithoutUserInput[]
@@ -539,6 +551,20 @@ export type NullableIntFieldUpdateOperationsInput = {
   divide?: number
 }
 
+export type UrlCreateNestedOneWithoutClickEventsInput = {
+  create?: Prisma.XOR<Prisma.UrlCreateWithoutClickEventsInput, Prisma.UrlUncheckedCreateWithoutClickEventsInput>
+  connectOrCreate?: Prisma.UrlCreateOrConnectWithoutClickEventsInput
+  connect?: Prisma.UrlWhereUniqueInput
+}
+
+export type UrlUpdateOneRequiredWithoutClickEventsNestedInput = {
+  create?: Prisma.XOR<Prisma.UrlCreateWithoutClickEventsInput, Prisma.UrlUncheckedCreateWithoutClickEventsInput>
+  connectOrCreate?: Prisma.UrlCreateOrConnectWithoutClickEventsInput
+  upsert?: Prisma.UrlUpsertWithoutClickEventsInput
+  connect?: Prisma.UrlWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UrlUpdateToOneWithWhereWithoutClickEventsInput, Prisma.UrlUpdateWithoutClickEventsInput>, Prisma.UrlUncheckedUpdateWithoutClickEventsInput>
+}
+
 export type UrlCreateWithoutUserInput = {
   id?: string
   originalUrl: string
@@ -549,6 +575,7 @@ export type UrlCreateWithoutUserInput = {
   expiresAt?: Date | string | null
   maxClicks?: number | null
   password?: string | null
+  clickEvents?: Prisma.ClickCreateNestedManyWithoutUrlInput
 }
 
 export type UrlUncheckedCreateWithoutUserInput = {
@@ -561,6 +588,7 @@ export type UrlUncheckedCreateWithoutUserInput = {
   expiresAt?: Date | string | null
   maxClicks?: number | null
   password?: string | null
+  clickEvents?: Prisma.ClickUncheckedCreateNestedManyWithoutUrlInput
 }
 
 export type UrlCreateOrConnectWithoutUserInput = {
@@ -605,6 +633,74 @@ export type UrlScalarWhereInput = {
   password?: Prisma.StringNullableFilter<"Url"> | string | null
 }
 
+export type UrlCreateWithoutClickEventsInput = {
+  id?: string
+  originalUrl: string
+  shortCode: string
+  clicks?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  expiresAt?: Date | string | null
+  maxClicks?: number | null
+  password?: string | null
+  user: Prisma.UserCreateNestedOneWithoutUrlsInput
+}
+
+export type UrlUncheckedCreateWithoutClickEventsInput = {
+  id?: string
+  originalUrl: string
+  shortCode: string
+  clicks?: number
+  userId: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  expiresAt?: Date | string | null
+  maxClicks?: number | null
+  password?: string | null
+}
+
+export type UrlCreateOrConnectWithoutClickEventsInput = {
+  where: Prisma.UrlWhereUniqueInput
+  create: Prisma.XOR<Prisma.UrlCreateWithoutClickEventsInput, Prisma.UrlUncheckedCreateWithoutClickEventsInput>
+}
+
+export type UrlUpsertWithoutClickEventsInput = {
+  update: Prisma.XOR<Prisma.UrlUpdateWithoutClickEventsInput, Prisma.UrlUncheckedUpdateWithoutClickEventsInput>
+  create: Prisma.XOR<Prisma.UrlCreateWithoutClickEventsInput, Prisma.UrlUncheckedCreateWithoutClickEventsInput>
+  where?: Prisma.UrlWhereInput
+}
+
+export type UrlUpdateToOneWithWhereWithoutClickEventsInput = {
+  where?: Prisma.UrlWhereInput
+  data: Prisma.XOR<Prisma.UrlUpdateWithoutClickEventsInput, Prisma.UrlUncheckedUpdateWithoutClickEventsInput>
+}
+
+export type UrlUpdateWithoutClickEventsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  originalUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  shortCode?: Prisma.StringFieldUpdateOperationsInput | string
+  clicks?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  maxClicks?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  user?: Prisma.UserUpdateOneRequiredWithoutUrlsNestedInput
+}
+
+export type UrlUncheckedUpdateWithoutClickEventsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  originalUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  shortCode?: Prisma.StringFieldUpdateOperationsInput | string
+  clicks?: Prisma.IntFieldUpdateOperationsInput | number
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  maxClicks?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
 export type UrlCreateManyUserInput = {
   id?: string
   originalUrl: string
@@ -627,6 +723,7 @@ export type UrlUpdateWithoutUserInput = {
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   maxClicks?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clickEvents?: Prisma.ClickUpdateManyWithoutUrlNestedInput
 }
 
 export type UrlUncheckedUpdateWithoutUserInput = {
@@ -639,6 +736,7 @@ export type UrlUncheckedUpdateWithoutUserInput = {
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   maxClicks?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clickEvents?: Prisma.ClickUncheckedUpdateManyWithoutUrlNestedInput
 }
 
 export type UrlUncheckedUpdateManyWithoutUserInput = {
@@ -654,6 +752,35 @@ export type UrlUncheckedUpdateManyWithoutUserInput = {
 }
 
 
+/**
+ * Count Type UrlCountOutputType
+ */
+
+export type UrlCountOutputType = {
+  clickEvents: number
+}
+
+export type UrlCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  clickEvents?: boolean | UrlCountOutputTypeCountClickEventsArgs
+}
+
+/**
+ * UrlCountOutputType without action
+ */
+export type UrlCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the UrlCountOutputType
+   */
+  select?: Prisma.UrlCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * UrlCountOutputType without action
+ */
+export type UrlCountOutputTypeCountClickEventsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ClickWhereInput
+}
+
 
 export type UrlSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -667,6 +794,8 @@ export type UrlSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = ru
   maxClicks?: boolean
   password?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  clickEvents?: boolean | Prisma.Url$clickEventsArgs<ExtArgs>
+  _count?: boolean | Prisma.UrlCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["url"]>
 
 export type UrlSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -713,6 +842,8 @@ export type UrlSelectScalar = {
 export type UrlOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "originalUrl" | "shortCode" | "clicks" | "userId" | "createdAt" | "updatedAt" | "expiresAt" | "maxClicks" | "password", ExtArgs["result"]["url"]>
 export type UrlInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  clickEvents?: boolean | Prisma.Url$clickEventsArgs<ExtArgs>
+  _count?: boolean | Prisma.UrlCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UrlIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -725,6 +856,7 @@ export type $UrlPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   name: "Url"
   objects: {
     user: Prisma.$UserPayload<ExtArgs>
+    clickEvents: Prisma.$ClickPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1132,6 +1264,7 @@ readonly fields: UrlFieldRefs;
 export interface Prisma__UrlClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  clickEvents<T extends Prisma.Url$clickEventsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Url$clickEventsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ClickPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1569,6 +1702,30 @@ export type UrlDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    * Limit how many Urls to delete.
    */
   limit?: number
+}
+
+/**
+ * Url.clickEvents
+ */
+export type Url$clickEventsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Click
+   */
+  select?: Prisma.ClickSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Click
+   */
+  omit?: Prisma.ClickOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ClickInclude<ExtArgs> | null
+  where?: Prisma.ClickWhereInput
+  orderBy?: Prisma.ClickOrderByWithRelationInput | Prisma.ClickOrderByWithRelationInput[]
+  cursor?: Prisma.ClickWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ClickScalarFieldEnum | Prisma.ClickScalarFieldEnum[]
 }
 
 /**

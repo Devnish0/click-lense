@@ -3,8 +3,7 @@ import { prisma } from "@/app/lib/prisma";
 import { HttpStatus } from "../lib/httpStatus";
 import { handleApiResponse } from "../lib/handleResponse";
 import { handleApiError } from "../lib/handleError";
-
-
+import { collectAnalytics } from "../lib/analytics";
 
 export async function GET(
   request: Request,
@@ -39,20 +38,28 @@ export async function GET(
       return handleApiResponse(HttpStatus.NOT_FOUND,"Url has reached max clicks")
     }
 
-    const updatedUrl = await prisma.url.update({
-      where :{
-        shortCode:shortcode
-      },
-      data:{
-        clicks:{
-          increment:1,
-        }
-      },
-      select :{
-        originalUrl:true
-      }
-    })
-    
+    // Collect analytics from request headers
+    const analytics = collectAnalytics(request);
+
+    // Increment clicks + store analytics event in a single transaction
+    const [updatedUrl] = await prisma.$transaction([
+      prisma.url.update({
+        where: { shortCode: shortcode },
+        data: { clicks: { increment: 1 } },
+        select: { originalUrl: true },
+      }),
+      prisma.click.create({
+        data: {
+          urlId: url.id,
+          browser: analytics.browser,
+          os: analytics.os,
+          device: analytics.device,
+          country: analytics.country,
+          referrer: analytics.referrer,
+          ipHash: analytics.ipHash,
+        },
+      }),
+    ]);
 
     return NextResponse.redirect(updatedUrl.originalUrl)
   } catch (error) {

@@ -52,7 +52,27 @@ export type User = Prisma.UserModel
  */
 export type Url = Prisma.UrlModel
 /**
+ * Model Click
+ * 
+ */
+export type Click = Prisma.ClickModel
+/**
  * Model playing_with_neon
  * 
  */
 export type playing_with_neon = Prisma.playing_with_neonModel
+/**
+ * Model Session
+ * 
+ */
+export type Session = Prisma.SessionModel
+/**
+ * Model Account
+ * 
+ */
+export type Account = Prisma.AccountModel
+/**
+ * Model Verification
+ * 
+ */
+export type Verification = Prisma.VerificationModel
