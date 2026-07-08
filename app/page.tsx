@@ -1,11 +1,15 @@
 import { ThemeToggle } from "./theme-toggle";
 import Header from "./components/ui/header";
+import Hero from "./components/ui/hero";
+import Footer from "./components/ui/footer";
 
 export default function Page() {
   return (
     <>
-      <Header></Header>
-      <main className="relative min-h-screen bg-background text-foreground font-sans flex items-center justify-center p-8">
+      <Header/>
+      <Hero/>
+      <Footer/>
+      {/* <main className="relative min-h-screen bg-background text-foreground font-sans flex items-center justify-center p-8">
         <div className="absolute right-6 top-6">
           <ThemeToggle />
         </div>
@@ -43,7 +47,7 @@ export default function Page() {
             </div>
           </div>
         </section>
-      </main>
+      </main> */}
     </>
   );
 }
