@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { NAME } from "@/lib/constant";
+import Link from "next/link";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
@@ -15,7 +17,7 @@ export default function Header() {
             C
           </span>
           <span className="text-xl font-bold tracking-tight text-foreground sm:text-2xl cursor-pointer">
-            Clause
+            {NAME}
           </span>
         </div>
 
@@ -23,17 +25,26 @@ export default function Header() {
         <nav className="hidden lg:flex items-center gap-8">
           <ul className="flex items-center gap-8 text-[0.95rem] font-medium text-secondary">
             <li>
-              <a href="#solutions" className="transition-colors hover:text-primary">
+              <a
+                href="#solutions"
+                className="transition-colors hover:text-primary"
+              >
                 solutions
               </a>
             </li>
             <li>
-              <a href="#project" className="transition-colors hover:text-primary">
+              <a
+                href="#project"
+                className="transition-colors hover:text-primary"
+              >
                 project
               </a>
             </li>
             <li>
-              <a href="#basics" className="transition-colors hover:text-primary">
+              <a
+                href="#basics"
+                className="transition-colors hover:text-primary"
+              >
                 basics
               </a>
             </li>
@@ -46,10 +57,10 @@ export default function Header() {
             variant="outline"
             className="border-2 border-border bg-transparent text-primary hover:bg-muted font-semibold transition-all"
           >
-            Login
+            <Link href="/login">Login</Link>
           </Button>
           <Button className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold transition-all">
-            Start now
+            <Link href="/login">Start now</Link>
           </Button>
         </div>
 
