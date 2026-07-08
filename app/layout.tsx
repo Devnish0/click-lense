@@ -48,9 +48,10 @@ export default function RootLayout({
           })();`}
         </Script>
       </head>
-      <body className="min-h-full flex flex-col bg-background text-foreground px-4 sm:px-6 md:px-10">
+      <body className="min-h-full flex flex-col bg-background text-foreground">
         {children}
       </body>
     </html>
   );
 }
+    
