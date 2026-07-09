@@ -4,13 +4,14 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { NAME } from "@/lib/constant";
 import Link from "next/link";
-
+import { ThemeToggle } from "@/app/theme-toggle";
+import { AlignRight, AlignRightIcon, MoveRight } from "lucide-react";
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <header className="relative w-full pt-4 z-50">
-      <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-5 sm:px-6 py-2 md:py-3.5 bg-card/70 backdrop-blur-md rounded-2xl border border-border/50 shadow-sm transition-all duration-300">
+    <header className="relative w-full lg:pt-4 z-50">
+      <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-5 sm:px-6 py-2 md:py-3.5 bg-card/70 backdrop-blur-md lg:rounded-2xl border border-border/50 shadow-sm transition-all duration-300">
         {/* Logo and Brand */}
         <div className="flex items-center gap-2">
           <span className="h-7 w-7 rounded-lg bg-primary flex items-center justify-center text-primary-foreground font-black text-sm select-none">
@@ -19,6 +20,9 @@ export default function Header() {
           <span className="text-xl font-bold tracking-tight text-foreground sm:text-2xl cursor-pointer">
             {NAME}
           </span>
+        </div>
+        <div className="flex items-center gap-3">
+          <ThemeToggle />
         </div>
 
         {/* Desktop Navigation Links */}
@@ -65,10 +69,19 @@ export default function Header() {
         </div>
 
         {/* Mobile Hamburger Button */}
+        <Button
+          size={"icon-sm"}
+          onClick={() => setIsOpen(false)}
+          className="lg:hidden bg-primary text-primary-foreground hover:bg-primary/90 font-semibold py-2 "
+        >
+          <Link href={"/login"}>
+            <MoveRight />
+          </Link>
+        </Button>
         <button
           onClick={() => setIsOpen(!isOpen)}
           type="button"
-          className="inline-flex lg:hidden items-center justify-center p-2 rounded-lg text-secondary hover:text-primary hover:bg-muted focus:outline-none transition-colors"
+          className="hidden lg:hidden items-center justify-center p-2 rounded-lg text-secondary hover:text-primary hover:bg-muted focus:outline-none transition-colors"
           aria-expanded={isOpen}
           aria-label="Toggle navigation menu"
         >
