@@ -15,7 +15,7 @@ export function InputInline() {
         />
         <Input type="search" placeholder="Search URLs here" className="pl-9" />
       </div>
-      <Button>Search</Button>
+      <Button className="cursor-pointer">Search</Button>
     </Field>
   );
 }

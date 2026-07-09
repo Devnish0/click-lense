@@ -21,11 +21,7 @@ export async function POST(request: Request) {
         "Please login to create a url",
       );
     }
-    // const data = jwt.verify(token.value, process.env.JWT_SECRET!) as {
-    //   UserToken: {
-    //     id: string;
-    //   };
-    // };
+
 
     // checking if the user is guest then we can limit the number of urls
     const user = await prisma.user.findUnique({
@@ -41,13 +37,6 @@ export async function POST(request: Request) {
         },
       },
     });
-
-    // if (user?.isGuest && user._count.urls >= 5) {
-    //   return handleApiResponse(
-    //     HttpStatus.FORBIDDEN,
-    //     "You can only create 5 urls as a guest",
-    //   );
-    // }
 
     const body = await request.json();
 
