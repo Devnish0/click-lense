@@ -143,10 +143,6 @@
   --font-serif: "Instrument Serif", Georgia, serif;
 }
 
-html {
-  color-scheme: light;
-}
-
 html.dark {
   --background: #073127;
   --foreground: #ebede8;

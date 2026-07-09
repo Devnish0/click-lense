@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import Script from "next/script";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
@@ -24,6 +23,18 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const themeBootstrapScript = `(() => {
+    try {
+      const storageKey = 'theme';
+      const root = document.documentElement;
+      const storedTheme = localStorage.getItem(storageKey);
+      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      const theme = storedTheme === 'dark' || storedTheme === 'light' ? storedTheme : systemTheme;
+      root.classList.toggle('dark', theme === 'dark');
+      root.style.colorScheme = theme;
+    } catch (error) {}
+  })();`;
+
   return (
     <html
       lang="en"
@@ -36,17 +47,7 @@ export default function RootLayout({
       )}
     >
       <head>
-        <Script id="theme-init" strategy="beforeInteractive">
-          {`(() => {
-            const storageKey = 'theme';
-            const root = document.documentElement;
-            const storedTheme = localStorage.getItem(storageKey);
-            const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-            const theme = storedTheme === 'dark' || storedTheme === 'light' ? storedTheme : systemTheme;
-            root.classList.toggle('dark', theme === 'dark');
-            root.style.colorScheme = theme;
-          })();`}
-        </Script>
+        <script dangerouslySetInnerHTML={{ __html: themeBootstrapScript }} />
       </head>
       <body className="min-h-full flex flex-col bg-background text-foreground">
         {children}
@@ -54,4 +55,3 @@ export default function RootLayout({
     </html>
   );
 }
-    

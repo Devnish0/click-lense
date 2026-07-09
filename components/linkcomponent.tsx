@@ -4,15 +4,18 @@ import { DEPLOYMENT_URL } from "@/lib/constant";
 import { cn } from "@/lib/utils";
 import QRCodeCard from "@/app/lib/qrgenerator";
 import { Button } from "@base-ui/react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState, type MouseEvent } from "react";
 import {
   Clock,
+  ClosedCaption,
   Copy,
+  Cross,
   Download,
   ExternalLink,
   Lock,
   Pen,
   QrCode,
+  X,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -74,6 +77,7 @@ export default function LinkComponent({
   const shortUrl = `${DEPLOYMENT_URL.replace(/\/$/, "")}/${encodeURIComponent(cleanCode)}`;
   const iconPath = pickSvgByShortcode(cleanCode);
   const qrCardRef = useRef<HTMLDivElement | null>(null);
+  const qrTriggerRef = useRef<HTMLSpanElement | null>(null);
   const [isQrHovered, setIsQrHovered] = useState(false);
   const [isQrPinned, setIsQrPinned] = useState(false);
   const isQrOpen = isQrHovered || isQrPinned;
@@ -101,6 +105,48 @@ export default function LinkComponent({
 
     URL.revokeObjectURL(url);
   };
+
+  const closeQr = () => {
+    setIsQrHovered(false);
+    setIsQrPinned(false);
+  };
+
+  const handlePopupClick = (event: MouseEvent<HTMLDivElement>) => {
+    event.stopPropagation();
+  };
+
+  useEffect(() => {
+    const handlePointerDown = (event: PointerEvent) => {
+      if (!isQrOpen) {
+        return;
+      }
+
+      const target = event.target as Node | null;
+
+      if (
+        qrTriggerRef.current?.contains(target) ||
+        qrCardRef.current?.contains(target)
+      ) {
+        return;
+      }
+
+      closeQr();
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        closeQr();
+      }
+    };
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isQrOpen]);
 
   return (
     <>
@@ -142,8 +188,9 @@ export default function LinkComponent({
             </span>
             <span className="flex items-center gap-3">
               <span
+                ref={qrTriggerRef}
                 className="relative"
-                onMouseEnter={() => setIsQrHovered(true)}
+                // onMouseEnter={() => setIsQrHovered(true)}
                 onMouseLeave={() => setIsQrHovered(false)}
               >
                 <button
@@ -152,49 +199,70 @@ export default function LinkComponent({
                   aria-expanded={isQrOpen}
                   aria-label="Show QR code"
                   className={cn(
-                    "rounded-full p-1 text-secondary/50 transition duration-120 ease-in-out",
-                    isQrOpen && "bg-secondary/10 text-secondary",
+                    "cursor-pointer rounded-full p-1 text-secondary/50 transition duration-120 ease-in-out hover:text-primary",
+                    isQrOpen && "text-secondary",
                   )}
                 >
                   <QrCode size={15} />
                 </button>
 
                 {isQrOpen && (
-                  <div className="absolute right-0 top-full z-20 mt-3 w-72 rounded-2xl border border-border/70 bg-background p-4 shadow-xl">
-                    <div className="flex flex-col items-center gap-3">
-                      <div ref={qrCardRef}>
-                        <QRCodeCard value={shortUrl} />
-                      </div>
-                      <div className="w-full space-y-2 text-center">
-                        <div className="text-xs font-medium text-secondary">
-                          Redirects to
-                        </div>
-                        <div className="break-all text-xs text-secondary/70">
-                          {shortUrl}
-                        </div>
-                        <div className="flex flex-col items-center justify-center gap-2">
-                          <span className="inline-flex items-center rounded-full border border-border px-3 py-1 text-[11px] text-secondary/70">
-                            /{cleanCode}
-                          </span>
-                          <div className="flex gap-2">
-                            <button
-                              type="button"
-                              onClick={handleDownloadQr}
-                              className="inline-flex items-center rounded-full border border-border px-3 py-1 text-[21px] text-secondary/70 transition duration-150 hover:cursor-pointer hover:border-primary hover:text-primary"
-                              aria-label="Download QR code"
-                            >
-                              <Download size={15} />
-                            </button>
-                            <button
-                              type="button"
-                              onClick={handleCopyShortUrl}
-                              className="inline-flex items-center rounded-full border border-border px-3 py-1 text-[21px] text-secondary/70 transition duration-150 hover:cursor-pointer hover:border-primary hover:text-primary"
-                              aria-label="Copy short URL"
-                            >
-                              <Copy size={15} />
-                            </button>
+                  <div className="fixed inset-0 z-30 md:absolute md:inset-auto md:right-0 md:top-full md:mt-3 ">
+                    <button
+                      type="button"
+                      aria-label="Close QR panel"
+                      onClick={closeQr}
+                      className="absolute inset-0 bg-black/35 md:hidden"
+                    />
+                    <div
+                      className="absolute right-0  top-full z-40 mt-3 w-72 rounded-2xl border border-border/70 bg-background p-4 shadow-xl max-md:fixed max-md:inset-x-3 max-md:bottom-3 max-md:top-auto max-md:w-auto"
+                      onClick={handlePopupClick}
+                    >
+                      <div className="flex items-center justify-center gap-3 ">
+                        <div className="flex flex-col items-center gap-3">
+                          <div ref={qrCardRef}>
+                            <QRCodeCard value={shortUrl} />
+                          </div>
+                          <div className="w-full space-y-2 text-center">
+                            <div className="text-xs font-medium text-secondary">
+                              Redirects to
+                            </div>
+                            <div className="break-all text-xs text-secondary/70">
+                              {shortUrl}
+                            </div>
+                            <div className="flex flex-col items-center justify-center gap-2">
+                              <span className="inline-flex items-center rounded-full border border-border px-3 py-1 text-[11px] text-secondary/70">
+                                /{cleanCode}
+                              </span>
+                              <div className="flex gap-2">
+                                <button
+                                  type="button"
+                                  onClick={handleDownloadQr}
+                                  className="inline-flex items-center rounded-full border border-border px-3 py-1 text-[21px] text-secondary/70 transition duration-150 hover:cursor-pointer hover:border-primary hover:text-primary"
+                                  aria-label="Download QR code"
+                                >
+                                  <Download size={15} />
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={handleCopyShortUrl}
+                                  className="inline-flex items-center rounded-full border border-border px-3 py-1 text-[21px] text-secondary/70 transition duration-150 hover:cursor-pointer hover:border-primary hover:text-primary"
+                                  aria-label="Copy short URL"
+                                >
+                                  <Copy size={15} />
+                                </button>
+                              </div>
+                            </div>
                           </div>
                         </div>
+                        <button
+                          type="button"
+                          onClick={closeQr}
+                          className="absolute cursor-pointer right-2 top-2 lg:right-0 lg:top-1 lg:pt-1 lg:border-primary  rounded-full  px-2 py-1 text-xs text-secondary/70 transition hover:border-primary hover:text-primary"
+                          aria-label="Close QR panel"
+                        >
+                          <X size={15} />
+                        </button>
                       </div>
                     </div>
                   </div>
