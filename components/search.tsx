@@ -62,7 +62,7 @@ export function InputInline() {
         setError(null);
         console.log("Valid URL:", result.data.originalUrl);
         router.push(
-          `/shorten?url=${encodeURIComponent(result.data.originalUrl)}`,
+          `/workspace/create?url=${encodeURIComponent(result.data.originalUrl)}`,
         );
       } else {
         const message =

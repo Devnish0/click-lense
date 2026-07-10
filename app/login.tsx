@@ -148,6 +148,7 @@ export default function Login() {
           <form
             onSubmit={handleEmailAuth}
             className="mb-4 flex w-full flex-col gap-4"
+            suppressHydrationWarning
           >
             {isSignUp && (
               <div className="flex w-full flex-col gap-1.5">

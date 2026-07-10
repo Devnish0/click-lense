@@ -2,9 +2,20 @@ import { z } from "zod";
 
 const isValidUrl = (value: string) => {
   try {
-    const url = new URL(value);
+    const normalized = /^https?:\/\//i.test(value) ? value : `https://${value}`;
 
-    return url.protocol === "http:" || url.protocol === "https:";
+    const url = new URL(normalized);
+
+    if (!["http:", "https:"].includes(url.protocol)) {
+      return false;
+    }
+
+    // Require a dot in the hostname
+    if (!url.hostname.includes(".")) {
+      return false;
+    }
+
+    return true;
   } catch {
     return false;
   }
