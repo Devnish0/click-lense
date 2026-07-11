@@ -15,16 +15,17 @@ interface Message {
   message: string;
 }
 interface inputType {
-  type: "text" | "url" | "password" | "preview" | "date" ;
+  type: "text" | "url" | "password" | "preview" | "date";
 }
 interface InputInlineProps {
   value?: string;
   onChange?: (value: string) => void;
   placeholder?: string;
-  MessageIncoming?: Message;
+  MessageIncoming?: Message | null;
   type?: string;
   icon?: any;
   disabled?: boolean;
+  runningFunction?: Function;
 }
 export function InputInline({
   placeholder,
@@ -34,6 +35,7 @@ export function InputInline({
   type = "text",
   icon,
   disabled,
+  runningFunction,
 }: InputInlineProps) {
   const isControlled = value !== undefined;
   const [localUrl, setLocalUrl] = useState("");
@@ -60,7 +62,11 @@ export function InputInline({
   };
 
   useEffect(() => {
-    if (message?.type == "error") {
+    setMessage(MessageIncoming || null);
+  }, [MessageIncoming]);
+
+  useEffect(() => {
+    if (message?.type==="error") {
       setShowTooltip(true);
       if (timerRef.current) {
         clearTimeout(timerRef.current);
@@ -80,18 +86,19 @@ export function InputInline({
         clearTimeout(timerRef.current);
       }
     };
-  }, [message?.type]);
+  }, [message]);
 
   const isVisible = !!message && (showTooltip || isHovered);
   return (
     <Field
+      onBlur={runningFunction as React.FocusEventHandler<HTMLInputElement>}
       orientation="horizontal"
       className="transition-all duration-200"
       suppressHydrationWarning
     >
       <div className={`relative flex-1`}>
-        {icon && (
-          typeof icon === "function" ? (
+        {icon &&
+          (typeof icon === "function" ? (
             (() => {
               const IconComponent = icon;
               return (
@@ -104,8 +111,7 @@ export function InputInline({
               strokeWidth={2}
               className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
             />
-          )
-        )}
+          ))}
         <Input
           type={type === "preview" ? "text" : type}
           disabled={disabled || type === "preview"}
@@ -173,7 +179,7 @@ export function InputInline({
             >
               <div className="relative bg-green-700 text-white text-xs px-2.5 py-1.5 rounded-lg shadow-md whitespace-nowrap">
                 {message.message}
-                <div className="absolute top-full left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rotate-45 bg-success" />
+                <div className="absolute top-full left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rotate-45 bg-green-700" />
               </div>
             </div>
           </>

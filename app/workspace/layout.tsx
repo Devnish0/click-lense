@@ -24,7 +24,7 @@ export default function HomeLayout({
   let pathname = usePathname();
   const finalPath = pathname.split("/")[2];
   return (
-    <main className=" border border-black min-h-screen">
+    <main className=" border  min-h-screen overflow-hidden bg-background flex">
       <SidebarProvider>
         <AppSidebar />
         <SidebarInset>

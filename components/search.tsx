@@ -9,7 +9,7 @@ import { createUrlSchema } from "@/app/lib/validators/clientValidators.ts/url";
 import { CircleAlertIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-function normalizeUrl(input: string) {
+export function normalizeUrl(input: string) {
   const value = input.trim();
 
   if (!/^https?:\/\//i.test(value)) {

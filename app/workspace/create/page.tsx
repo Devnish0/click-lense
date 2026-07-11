@@ -15,10 +15,15 @@ import { DEPLOYMENT_URL } from "@/lib/constant";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import { Card } from "@/components/ui/card";
-import { Calendar, Laptop, Globe as LucideGlobe, Share2, Compass } from "lucide-react";
 
-// app/shop/page.tsx
+import AnalyticsComponent from "@/components/analyticscomponent";
+import { normalizeUrl } from "@/components/search";
+import { createUrlSchema, validPassword } from "@/app/lib/validators/clientValidators.ts/url";
+
+interface Message {
+  type: "error" | "success";
+  message: string;
+}
 
 export default function Page({
   searchParams,
@@ -31,16 +36,76 @@ export default function Page({
       ? resolvedSearchParams.url
       : "";
   const [inUrl, setInUrl] = useState(url);
+  const [urlSuccess, setUrlSuccess] = useState<Message | null>(null);
   const [slug, setSlug] = useState<string>("");
+  const [slugSuccess,setSlugSuccess] = useState<Message | null>(null);
   const [passProtection, setPassProtection] = useState(false);
+  const [passwordSuccess,setPasswordSuccess] = useState<Message | null>(null);
   const [password, setPassword] = useState<string>("");
   const [expirationEnabled, setExpirationEnabled] = useState(false);
   const [expirationDate, setExpirationDate] = useState<string>("");
+  const [expirationSuccess,setExpirationSuccess] = useState<Message | null>(null);
   const [analyticsEnabled, setAnalyticsEnabled] = useState(true);
+  const handleExpiration = ()=>{
+    console.log(expirationDate)
+  }
+  const handleUrl = () => {
+    // Handle form submission logic here
+    try {
+      const result = createUrlSchema.safeParse({
+        originalUrl: normalizeUrl(inUrl),
+      });
+      if (result.success) {
+        setUrlSuccess({
+          type: "success",
+          message: "URL created successfully!",
+        });
+        console.log("Valid URL:", result.data.originalUrl);
+      } else {
+        const message =
+          result.error.flatten().fieldErrors.originalUrl?.[0] ??
+          result.error.issues[0]?.message;
+
+        setUrlSuccess({
+          type: "error",
+          message: message,
+        });
+        console.log("Invalid URL:", result.error);
+      }
+    } catch (error) {
+      console.error("error:", error);
+    }
+  };
+  const handlePassword = ()=>{
+    // Handle form submission logic here
+    try{
+      const result = validPassword.safeParse(password);
+      if (result.success) {
+        setPasswordSuccess({
+          type: "success",
+          message: "Password created successfully!",
+        });
+        console.log("Valid Password:", result.data);
+      } else {
+        const message =
+          result.error.flatten().fieldErrors?.[0] ??
+          result.error.issues[0]?.message;
+
+        setPasswordSuccess({
+          type: "error",
+          message: message,
+        });
+        console.log("Invalid Password:", result.error);
+      }
+    }catch(error){
+      console.error("error:", error);
+    }
+    
+  }
 
   return (
-    <main className="w-full min-h-[93vh] border ">
-      <div className="w-full pt-3 lg:px-18 px-2 flex flex-col h-full border ">
+    <main className="w-full min-h-[93vh]">
+      <div className="w-full pt-3 lg:px-18 px-2 flex flex-col h-full">
         <div className="text-4xl font-serif italic w-full">Create Url</div>
         <div className="mt-9 pl-1 font-extralight text-xs text-secondary/70 flex flex-col gap-8">
           <div>
@@ -51,10 +116,8 @@ export default function Page({
               value={inUrl}
               onChange={(value) => setInUrl(value)}
               icon={Link01Icon}
-              MessageIncoming={{
-                type: "success",
-                message: "long url is not valid",
-              }}
+              MessageIncoming={urlSuccess}
+              runningFunction={handleUrl}
             />
           </div>
           <div className="grid grid-cols-2 gap-3 w-full ">
@@ -67,6 +130,7 @@ export default function Page({
                   placeholder="my-slug"
                   value={slug}
                   onChange={(value) => setSlug(value)}
+                  
                   MessageIncoming={{
                     type: "success",
                     message: "long url is not valid",
@@ -94,7 +158,11 @@ export default function Page({
                   <Switch
                     id="password-protection"
                     checked={passProtection}
-                    onCheckedChange={(value) => setPassProtection(value)}
+                    onCheckedChange={(value) => {
+                      setPassProtection(value)
+                      setPassword("")
+                      setPasswordSuccess(null)
+                    }}
                     className={cn("cursor-pointer")}
                   />
                   <Label htmlFor="password-protection">
@@ -106,22 +174,26 @@ export default function Page({
                     type="password"
                     placeholder="Enter password"
                     value={password}
-                    onChange={(value) => setPassword(value)}
+                    onChange={(value) => {setPassword(value)}}
                     icon={LockIcon}
                     disabled={!passProtection}
-                    MessageIncoming={{
-                      type: "success",
-                      message: "long url is not valid",
-                    }}
+                    runningFunction={handlePassword}
+                    MessageIncoming={passwordSuccess}
                   />
                 </div>
               </div>
+
               <div className="pl-2 grid grid-cols-2 ">
                 <div className="flex items-center space-x-2">
                   <Switch
                     id="Expiration"
                     checked={expirationEnabled}
-                    onCheckedChange={(value) => setExpirationEnabled(value)}
+                    onCheckedChange={(value) =>{ 
+                      setExpirationEnabled(value)
+                      setExpirationDate("")
+                      setExpirationSuccess(null)
+
+                    }}
                     className={cn("cursor-pointer")}
                   />
                   <Label htmlFor="Expiration">Expiration</Label>
@@ -134,13 +206,12 @@ export default function Page({
                     onChange={(value) => setExpirationDate(value)}
                     icon={Time}
                     disabled={!expirationEnabled}
-                    MessageIncoming={{
-                      type: "success",
-                      message: "long url is not valid",
-                    }}
+                    runningFunction={handleExpiration}
+                    MessageIncoming={expirationSuccess}
                   />
                 </div>
               </div>
+
               <div className="pl-2 flex w-full flex-col gap-8">
                 <div className="flex items-center space-x-2">
                   <Switch
@@ -151,198 +222,8 @@ export default function Page({
                   />
                   <Label htmlFor="Analytics">Analytics</Label>
                 </div>
-                <div>
-                  <Card className={cn(
-                    "w-full mb-2 overflow-hidden transition-all duration-300 border border-border/80 bg-card/60 backdrop-blur-md shadow-sm rounded-xl p-5",
-                    !analyticsEnabled && "opacity-40 pointer-events-none select-none filter grayscale-[30%]"
-                  )}>
-                    <div className="flex items-center justify-between mb-5">
-                      <div>
-                        <h3 className="font-semibold text-sm text-foreground flex items-center gap-1.5">
-                          📊 Analytics & Insights Preview
-                        </h3>
-                        <p className="text-xs text-muted-foreground mt-0.5">
-                          Here is a preview of the detailed statistics tracked for this link.
-                        </p>
-                      </div>
-                      <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 animate-pulse">
-                        Preview
-                      </span>
-                    </div>
-
-                    {/* Metric Cards Row */}
-                    <div className="grid grid-cols-3 gap-3 mb-5">
-                      <div className="p-3 bg-muted/20 border border-border/30 rounded-lg">
-                        <span className="text-[10px] font-medium text-muted-foreground uppercase">Total Clicks</span>
-                        <h4 className="text-xl font-bold text-foreground mt-1">795</h4>
-                        <span className="text-[9px] text-green-500 font-medium">↑ 12% today</span>
-                      </div>
-                      <div className="p-3 bg-muted/20 border border-border/30 rounded-lg">
-                        <span className="text-[10px] font-medium text-muted-foreground uppercase">Unique Visitors</span>
-                        <h4 className="text-xl font-bold text-foreground mt-1">483</h4>
-                        <span className="text-[9px] text-green-500 font-medium">92% conversion</span>
-                      </div>
-                      <div className="p-3 bg-muted/20 border border-border/30 rounded-lg">
-                        <span className="text-[10px] font-medium text-muted-foreground uppercase">Active Status</span>
-                        <h4 className="text-xl font-bold text-primary mt-1">Live</h4>
-                        <span className="text-[9px] text-muted-foreground">Tracking enabled</span>
-                      </div>
-                    </div>
-
-                    {/* Main Dashboard Layout */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {/* Left Column */}
-                      <div className="space-y-4">
-                        {/* Time Analytics */}
-                        <div className="p-3.5 bg-muted/10 border border-border/20 rounded-lg">
-                          <h4 className="text-xs font-semibold text-foreground flex items-center gap-1.5 mb-2.5">
-                            <Calendar className="w-3.5 h-3.5 text-blue-500" />
-                            Time Analytics
-                          </h4>
-                          <div className="h-16 flex items-end justify-between gap-1 px-1">
-                            {/* Mock bar chart columns */}
-                            {[30, 45, 25, 60, 40, 80, 55, 70, 40, 90, 65, 85].map((height, i) => (
-                              <div key={i} className="flex-1 flex flex-col items-center group">
-                                <div 
-                                  className="w-full bg-primary/20 group-hover:bg-primary rounded-t transition-all duration-200" 
-                                  style={{ height: `${height}%` }}
-                                />
-                              </div>
-                            ))}
-                          </div>
-                          <div className="flex justify-between items-center mt-2 text-[10px] text-muted-foreground">
-                            <span>00:00</span>
-                            <span className="font-medium text-foreground">Weekly Clicks Trend</span>
-                            <span>24:00</span>
-                          </div>
-                        </div>
-
-                        {/* Device & OS breakdown */}
-                        <div className="p-3.5 bg-muted/10 border border-border/20 rounded-lg">
-                          <h4 className="text-xs font-semibold text-foreground flex items-center gap-1.5 mb-2.5">
-                            <Laptop className="w-3.5 h-3.5 text-purple-500" />
-                            Device & OS Insights
-                          </h4>
-                          <div className="space-y-2">
-                            {/* Devices */}
-                            <div>
-                              <div className="flex justify-between text-[11px] font-medium text-foreground mb-1">
-                                <span>Desktop</span>
-                                <span>61%</span>
-                              </div>
-                              <div className="w-full bg-muted/30 h-1.5 rounded-full overflow-hidden">
-                                <div className="bg-purple-500 h-full rounded-full" style={{ width: "61%" }} />
-                              </div>
-                            </div>
-                            <div>
-                              <div className="flex justify-between text-[11px] font-medium text-foreground mb-1">
-                                <span>Mobile</span>
-                                <span>34%</span>
-                              </div>
-                              <div className="w-full bg-muted/30 h-1.5 rounded-full overflow-hidden">
-                                <div className="bg-blue-500 h-full rounded-full" style={{ width: "34%" }} />
-                              </div>
-                            </div>
-                          </div>
-                          
-                          {/* OS Tags */}
-                          <div className="flex flex-wrap gap-1 mt-3">
-                            {["Windows", "macOS", "Linux", "Android", "iOS", "ChromeOS"].map((os) => (
-                              <span key={os} className="text-[9px] bg-muted/40 text-muted-foreground px-1.5 py-0.5 rounded border border-border/20">
-                                {os}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Right Column */}
-                      <div className="space-y-4">
-                        {/* Geographic Analytics */}
-                        <div className="p-3.5 bg-muted/10 border border-border/20 rounded-lg">
-                          <h4 className="text-xs font-semibold text-foreground flex items-center gap-1.5 mb-2.5">
-                            <LucideGlobe className="w-3.5 h-3.5 text-emerald-500" />
-                            Geographic Analytics
-                          </h4>
-                          <div className="space-y-2 text-[11px]">
-                            <div className="flex justify-between items-center">
-                              <span className="flex items-center gap-1.5">
-                                <span>🇮🇳</span> India
-                              </span>
-                              <span className="font-semibold text-foreground">483 clicks</span>
-                            </div>
-                            <div className="flex justify-between items-center">
-                              <span className="flex items-center gap-1.5">
-                                <span>🇺🇸</span> USA
-                              </span>
-                              <span className="font-semibold text-foreground">201 clicks</span>
-                            </div>
-                            <div className="flex justify-between items-center">
-                              <span className="flex items-center gap-1.5">
-                                <span>🇩🇪</span> Germany
-                              </span>
-                              <span className="font-semibold text-foreground">76 clicks</span>
-                            </div>
-                            <div className="flex justify-between items-center">
-                              <span className="flex items-center gap-1.5">
-                                <span>🇯🇵</span> Japan
-                              </span>
-                              <span className="font-semibold text-foreground">35 clicks</span>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Referrers & Browsers */}
-                        <div className="p-3.5 bg-muted/10 border border-border/20 rounded-lg">
-                          <div className="grid grid-cols-2 gap-3">
-                            {/* Referrers */}
-                            <div>
-                              <h5 className="text-[10px] uppercase font-bold text-muted-foreground mb-2 flex items-center gap-1">
-                                <Share2 className="w-3 h-3 text-cyan-500" /> Referrers
-                              </h5>
-                              <div className="space-y-1.5 text-[11px]">
-                                <div className="flex justify-between text-muted-foreground">
-                                  <span className="truncate">Google</span>
-                                  <span className="font-medium text-foreground">62%</span>
-                                </div>
-                                <div className="flex justify-between text-muted-foreground">
-                                  <span className="truncate">Twitter</span>
-                                  <span className="font-medium text-foreground">24%</span>
-                                </div>
-                                <div className="flex justify-between text-muted-foreground">
-                                  <span className="truncate">Direct</span>
-                                  <span className="font-medium text-foreground">14%</span>
-                                </div>
-                              </div>
-                            </div>
-
-                            {/* Browsers */}
-                            <div>
-                              <h5 className="text-[10px] uppercase font-bold text-muted-foreground mb-2 flex items-center gap-1">
-                                <Compass className="w-3 h-3 text-orange-500" /> Browsers
-                              </h5>
-                              <div className="space-y-1.5 text-[11px]">
-                                <div className="flex justify-between text-muted-foreground">
-                                  <span className="truncate">Chrome</span>
-                                  <span className="font-medium text-foreground">58%</span>
-                                </div>
-                                <div className="flex justify-between text-muted-foreground">
-                                  <span className="truncate">Safari</span>
-                                  <span className="font-medium text-foreground">22%</span>
-                                </div>
-                                <div className="flex justify-between text-muted-foreground">
-                                  <span className="truncate">Firefox</span>
-                                  <span className="font-medium text-foreground">12%</span>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </Card>
-                </div>
               </div>
+              <AnalyticsComponent analyticsEnabled={analyticsEnabled} />
             </div>
           </div>
         </div>

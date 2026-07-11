@@ -28,3 +28,7 @@ export const createUrlSchema = z.object({
 });
 
 export type createUrlSchema = z.infer<typeof createUrlSchema>;
+
+export const validPassword = z.string().min(6, "Password must be at least 6 characters long")
+
+export type validPassword = z.infer<typeof validPassword>;
