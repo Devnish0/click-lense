@@ -38,7 +38,7 @@ export const createUrlSchemaClient = z.object({
   }),
 });
 
-export type createUrlSchema = z.infer<typeof createUrlSchemaClient>;
+export type createUrlSchemaClient = z.infer<typeof createUrlSchemaClient>;
 
 export const validPassword = z
   .string()

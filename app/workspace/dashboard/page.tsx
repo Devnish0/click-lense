@@ -4,6 +4,7 @@ import LinkComponent from "@/components/linkcomponent";
 import { InputInline } from "@/components/search";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface userUrl {
   shortCode: string;
@@ -11,6 +12,66 @@ interface userUrl {
   password?: string | null;
   expiresAt?: string | null;
 }
+
+function LinkSkeleton() {
+  return (
+    <>
+    <div className="flex flex-col p-3 border-b border-border/70 last:border-b-0">
+      <div className="flex items-center justify-between w-full">
+        <div className="flex gap-2 items-center">
+          <Skeleton className="size-11 rounded-lg" />
+          <div className="flex flex-col gap-1.5">
+            <Skeleton className="h-4 w-24" />
+            <Skeleton className="h-3 w-40" />
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <Skeleton className="hidden lg:inline-block h-6 w-32 rounded-3xl" />
+          <Skeleton className="hidden lg:inline-block h-4 w-16" />
+          <div className="flex items-center gap-3">
+            <Skeleton className="size-6 rounded-full" />
+            <Skeleton className="size-4" />
+            <Skeleton className="size-4" />
+            <Skeleton className="size-8 rounded-lg" />
+          </div>
+        </div>
+      </div>
+      <div className="lg:hidden flex flex-col gap-2 mt-3">
+        <Skeleton className="h-6 w-32 rounded-3xl" />
+        <Skeleton className="h-4 w-16" />
+      </div>
+      
+    </div>
+      <div className="flex flex-col p-3 border-b border-border/70 last:border-b-0">
+      <div className="flex items-center justify-between w-full">
+        <div className="flex gap-2 items-center">
+          <Skeleton className="size-11 rounded-lg" />
+          <div className="flex flex-col gap-1.5">
+            <Skeleton className="h-4 w-24" />
+            <Skeleton className="h-3 w-40" />
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <Skeleton className="hidden lg:inline-block h-6 w-32 rounded-3xl" />
+          <Skeleton className="hidden lg:inline-block h-4 w-16" />
+          <div className="flex items-center gap-3">
+            <Skeleton className="size-6 rounded-full" />
+            <Skeleton className="size-4" />
+            <Skeleton className="size-4" />
+            <Skeleton className="size-8 rounded-lg" />
+          </div>
+        </div>
+      </div>
+      <div className="lg:hidden flex flex-col gap-2 mt-3">
+        <Skeleton className="h-6 w-32 rounded-3xl" />
+        <Skeleton className="h-4 w-16" />
+      </div>
+      
+    </div>
+     </>
+  );
+}
+
 export default function Page() {
   const [userUrls, setUserUrls] = useState<userUrl[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -45,7 +106,11 @@ export default function Page() {
             Projects
           </div>
           {loading ? (
-            <>loading</>
+            <div className="w-full border rounded-sm mt-3 border-border/70 divide-y divide-border/70">
+              <LinkSkeleton />
+              <LinkSkeleton />
+              <LinkSkeleton />
+            </div>
           ) : userUrls.length > 0 ? (
             <div className="w-full border rounded-sm mt-3 border-border/70 ">
               {userUrls.map((link: userUrl) => {
