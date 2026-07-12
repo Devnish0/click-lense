@@ -40,7 +40,6 @@ export async function POST(request: Request) {
     const body = await request.json();
 
     const validateData = createUrlSchema.parse(body);
-    console.log("validateData is", validateData);
     const url = await prisma.url.create({
       data: {
         originalUrl: validateData.originalUrl,
@@ -63,20 +62,24 @@ export async function POST(request: Request) {
 export async function GET(request: Request) {
   try {
     const session = await auth.api.getSession({ headers: request.headers });
-    console.log("session is", session);
-    if (session?.session?.id) {
-      // const data = jwt.verify(token.value, process.env.JWT_SECRET!) as {
-      //   UserToken: {
-      //     id: string;
-      //   };
-      // };
-      const userUrls = await prisma.url.findMany({
-        where: {
-          userId: session?.session?.userId,
-        },
-      });
-      return handleApiResponse(HttpStatus.OK, "success", { userUrls });
+    if (!session?.session?.id) {
+      return handleApiResponse(
+        HttpStatus.UNAUTHORIZED,
+        "Please login to view your URLs",
+      );
     }
+    const userUrls = await prisma.url.findMany({
+      where: {
+        userId: session?.session?.userId,
+      },
+      select:{
+        shortCode:true,
+        originalUrl:true,
+        password:true,
+        expiresAt:true,
+      }
+    });
+    return handleApiResponse(HttpStatus.OK, "success", { userUrls });
   } catch (error) {
     return handleApiError(error);
   }

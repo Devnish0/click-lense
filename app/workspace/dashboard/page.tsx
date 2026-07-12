@@ -1,46 +1,35 @@
+"use client";
 // import LinkComponent from "@/components/linkcomponent";
 import LinkComponent from "@/components/linkcomponent";
 import { InputInline } from "@/components/search";
+import axios from "axios";
+import { useEffect, useState } from "react";
 
+interface userUrl {
+  shortCode: string;
+  originalUrl: string;
+  password?: string | null;
+  expiresAt?: string | null;
+}
 export default function Page() {
-  const data = [
-    {
-      shortcode: "hey",
-      originalUrl: "https://google.com",
-      Password: true,
-      expiresAt: "12pm",
-    },
-    {
-      shortcode: "hello",
-      originalUrl: "https://github.com",
-      Password: false,
-      expiresAt: "12pm",
-    },
-    {
-      shortcode: "world",
-      originalUrl: "https://stackoverflow.com",
-      Password: true,
-      expiresAt: "12pm",
-    },
-    {
-      shortcode: "aey",
-      originalUrl: "https://google.com",
-      Password: true,
-      expiresAt: "12pm",
-    },
-    {
-      shortcode: "bey",
-      originalUrl: "https://google.com",
-      Password: true,
-      expiresAt: "12pm",
-    },
-    {
-      shortcode: "dey",
-      originalUrl: "https://google.com",
-      Password: true,
-      expiresAt: "12pm",
-    },
-  ];
+  const [userUrls, setUserUrls] = useState<userUrl[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get("/api/url");
+        console.log(response);
+        setUserUrls(response.data?.data?.userUrls || []);
+      } catch (error) {
+        console.error("Failed to fetch user URLs:", error);
+        setUserUrls([]);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
+
   return (
     <>
       <main className="w-full min-h-[93vh] border ">
@@ -55,27 +44,22 @@ export default function Page() {
           <div className="mt-3 pl-1 font-extralight text-xs text-secondary/70">
             Projects
           </div>
-          {/* {data.map((link) => {
-              return (
-                <LinkComponent
-                  key={link.shortcode}
-                  Password={link.Password}
-                  expiresAt={link.expiresAt}
-                  originalURL={link.originalUrl}
-                  shortcode={link.shortcode}
-                />
-              );
-            }} */}
-          {data.length > 0 ? (
+          {loading ? (
+            <>loading</>
+          ) : userUrls.length > 0 ? (
             <div className="w-full border rounded-sm mt-3 border-border/70 ">
-              {data.map((link) => {
+              {userUrls.map((link: userUrl) => {
                 return (
                   <LinkComponent
-                    key={link.shortcode}
-                    Password={link.Password}
-                    expiresAt={link.expiresAt}
+                    key={link.shortCode}
+                    Password={!!link.password}
+                    expiresAt={
+                      link.expiresAt
+                        ? new Date(link.expiresAt).toLocaleDateString()
+                        : "Never"
+                    }
                     originalURL={link.originalUrl}
-                    shortcode={link.shortcode}
+                    shortcode={link.shortCode}
                   />
                 );
               })}
@@ -87,6 +71,7 @@ export default function Page() {
               <p className="text-secondary/50">create your first url</p>
             </div>
           )}
+
           <div className=""></div>
         </div>
       </main>

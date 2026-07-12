@@ -31,10 +31,8 @@ export const handleSlug = async ({ setSlugSuccess, slug }: HandleSlugArgs) => {
   try {
     const validatedSlug = validSlug.safeParse(slug);
     if (validatedSlug.success) {
-      console.log("slug first check is passed");
       try {
         const response = await axios.get(`/api/url/slugcheck?slug=${slug}`);
-        console.log(response);
         if (response.data && response.data.data) {
           if (response.data.data.exists) {
             setSlugSuccess({
@@ -73,7 +71,6 @@ export const handlePassword = ({
         type: "success",
         message: "Password created successfully!",
       });
-      console.log("Valid Password:", result.data);
     } else {
       const message =
         result.error.flatten().fieldErrors?.[0] ??

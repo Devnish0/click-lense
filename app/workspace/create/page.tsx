@@ -3,7 +3,7 @@ import QRCodeCard from "@/app/lib/qrgenerator";
 import { Message } from "./types";
 import { generateRandomSlug } from "./helperfun";
 import { handlePassword, handleSlug, handleUrl } from "./handlesubmit";
-import { InputInline } from "@/components/form/url";
+import { InputInline } from "@/components/form/inputinline";
 import { use, useEffect, useState } from "react";
 import {
   Date as DateIcon,
@@ -77,14 +77,37 @@ export default function Page({
     handleUrl({ inUrl, setUrlSuccess });
   };
 
-  const handleSubmitting = () => {
-    setSubmiting(true);
-  };
-
   const handleExpiration = () => {
-    if (expirationEnabled) {
-      console.log(expirationDate);
+    if (!expirationEnabled) {
+      setExpirationSuccess(null);
+      return;
     }
+    if (!expirationDate) {
+      setExpirationSuccess({
+        type: "error",
+        message: "Expiration date and time is required",
+      });
+      return;
+    }
+    const selectedDate = new Date(expirationDate);
+    if (isNaN(selectedDate.getTime())) {
+      setExpirationSuccess({
+        type: "error",
+        message: "Invalid expiration date and time",
+      });
+      return;
+    }
+    if (selectedDate <= new Date()) {
+      setExpirationSuccess({
+        type: "error",
+        message: "Expiration must be in the future",
+      });
+      return;
+    }
+    setExpirationSuccess({
+      type: "success",
+      message: "Expiration date and time is valid!",
+    });
   };
 
   const handleCreate = async () => {
@@ -133,9 +156,38 @@ export default function Page({
         }
       }
 
+      // 4. Validate expiration date if enabled
+      if (expirationEnabled) {
+        if (!expirationDate) {
+          setExpirationSuccess({
+            type: "error",
+            message: "Expiration date and time is required",
+          });
+          setSubmiting(false);
+          return;
+        }
+        const selectedDate = new Date(expirationDate);
+        if (isNaN(selectedDate.getTime())) {
+          setExpirationSuccess({
+            type: "error",
+            message: "Invalid expiration date and time",
+          });
+          setSubmiting(false);
+          return;
+        }
+        if (selectedDate <= new Date()) {
+          setExpirationSuccess({
+            type: "error",
+            message: "Expiration must be in the future",
+          });
+          setSubmiting(false);
+          return;
+        }
+      }
+
       const finalSlug = slug.trim() || generateRandomSlug();
 
-      // 4. Make POST request
+      // 5. Make POST request
       const finalObject: createUrlSchema = {
         userId: session?.user?.id || "",
         maxClicks: 1000,
@@ -144,11 +196,11 @@ export default function Page({
         password: passProtection ? password : "",
         expiresAt:
           expirationEnabled && expirationDate
-            ? new Date(expirationDate).toISOString()
+            ? new Date(expirationDate)
             : undefined,
       };
       const response = await axios.post("/api/url", finalObject);
-      
+
       const resData = response.data;
       if (!resData?.success) {
         throw new Error(resData?.message || "Failed to create short URL");
@@ -288,10 +340,13 @@ export default function Page({
                 </div>
                 <div>
                   <InputInline
-                    type="date"
-                    placeholder="Enter Expiration date"
+                    type="datetime-local"
+                    placeholder="Enter Expiration date and time"
                     value={expirationDate}
-                    onChange={(value) => setExpirationDate(value)}
+                    onChange={(value) => {
+                      setExpirationDate(value);
+                      setExpirationSuccess(null);
+                    }}
                     icon={DateIcon}
                     disabled={!expirationEnabled || submitting}
                     runningFunction={handleExpiration}

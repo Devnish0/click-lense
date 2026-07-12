@@ -27,6 +27,16 @@ interface InputInlineProps {
   disabled?: boolean;
   runningFunction?: Function;
 }
+const formatDate = (val: string) => {
+  if (!val) return "";
+  const date = new Date(val);
+  if (isNaN(date.getTime())) return val;
+  return date.toLocaleString(undefined, {
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
+};
+
 export function InputInline({
   placeholder,
   value,
@@ -48,6 +58,7 @@ export function InputInline({
   const [isHovered, setIsHovered] = useState(false);
   const [copied, setCopied] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const [isFocused, setIsFocused] = useState(false);
 
   const handleCopy = async () => {
     try {
@@ -113,11 +124,34 @@ export function InputInline({
             />
           ))}
         <Input
-          type={type === "preview" ? "text" : type}
+          type={
+            type === "datetime-local"
+              ? (isFocused ? "datetime-local" : "text")
+              : (type === "preview" ? "text" : type)
+          }
           disabled={disabled || type === "preview"}
           placeholder={placeholder || "Enter your long URL here"}
-          className={cn(icon ? "pl-9" : "pl-3", "text-sm lg:text-md")}
-          value={displayValue}
+          className={cn(
+            icon ? "pl-9" : "pl-3",
+            "text-sm lg:text-md",
+            type === "datetime-local" && "[&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none cursor-pointer"
+          )}
+          value={
+            type === "datetime-local" && !isFocused
+              ? formatDate(displayValue)
+              : displayValue
+          }
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
+          onClick={(e) => {
+            if (type === "datetime-local") {
+              try {
+                e.currentTarget.showPicker();
+              } catch (err) {
+                console.error("showPicker failed:", err);
+              }
+            }
+          }}
           onChange={(e) => {
             const nextVal = e.target.value;
             if (!isControlled) {
@@ -155,15 +189,15 @@ export function InputInline({
               className="text-destructive cursor-help"
             />
             <div
-              className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-50 transition-all duration-200 origin-bottom ${
+              className={`absolute bottom-full right-0 md:left-1/2 md:-translate-x-1/2 md:right-auto mb-2 z-50 transition-all duration-200 origin-bottom-right md:origin-bottom ${
                 isVisible
                   ? "opacity-100 translate-y-0 scale-100 pointer-events-auto"
                   : "opacity-0 translate-y-1 scale-95 pointer-events-none"
               }`}
             >
-              <div className="relative bg-destructive text-destructive-foreground text-xs px-2.5 py-1.5 rounded-lg shadow-md whitespace-nowrap">
+              <div className="relative bg-destructive text-destructive-foreground text-xs px-2.5 py-1.5 rounded-lg shadow-md max-w-[250px] md:max-w-none whitespace-normal md:whitespace-nowrap">
                 {message.message}
-                <div className="absolute top-full left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rotate-45 bg-destructive" />
+                <div className="absolute top-full right-1.5 md:left-1/2 md:-translate-x-1/2 md:right-auto -translate-y-1/2 w-2 h-2 rotate-45 bg-destructive" />
               </div>
             </div>
           </>
@@ -171,15 +205,15 @@ export function InputInline({
           <>
             <CircleCheckIcon size={16} className="text-green-500 cursor-help" />
             <div
-              className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-50 transition-all duration-200 origin-bottom ${
+              className={`absolute bottom-full right-0 md:left-1/2 md:-translate-x-1/2 md:right-auto mb-2 z-50 transition-all duration-200 origin-bottom-right md:origin-bottom ${
                 isVisible
                   ? "opacity-100 translate-y-0 scale-100 pointer-events-auto"
                   : "opacity-0 translate-y-1 scale-95 pointer-events-none"
               }`}
             >
-              <div className="relative bg-green-700 text-white text-xs px-2.5 py-1.5 rounded-lg shadow-md whitespace-nowrap">
+              <div className="relative bg-green-700 text-white text-xs px-2.5 py-1.5 rounded-lg shadow-md max-w-[250px] md:max-w-none whitespace-normal md:whitespace-nowrap">
                 {message.message}
-                <div className="absolute top-full left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rotate-45 bg-green-700" />
+                <div className="absolute top-full right-1.5 md:left-1/2 md:-translate-x-1/2 md:right-auto -translate-y-1/2 w-2 h-2 rotate-45 bg-green-700" />
               </div>
             </div>
           </>
