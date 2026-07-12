@@ -22,15 +22,7 @@ export default function AnalyticsComponent({
         )}
       >
         <div className="flex items-center justify-between mb-5">
-          <div>
-            <h3 className="font-semibold text-sm text-foreground flex items-center gap-1.5">
-              📊 Analytics & Insights Preview
-            </h3>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              Here is a preview of the detailed statistics tracked for this
-              link.
-            </p>
-          </div>
+          <div>Analytics & Insights Preview</div>
           <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 animate-pulse">
             Preview
           </span>

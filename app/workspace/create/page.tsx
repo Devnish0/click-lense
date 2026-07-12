@@ -3,6 +3,7 @@ import QRCodeCard from "@/app/lib/qrgenerator";
 import { InputInline } from "@/components/form/url";
 import { use, useState } from "react";
 import {
+  ArrowAllDirectionFreeIcons,
   Date,
   Globe,
   Globe02FreeIcons,
@@ -18,7 +19,15 @@ import { cn } from "@/lib/utils";
 
 import AnalyticsComponent from "@/components/analyticscomponent";
 import { normalizeUrl } from "@/components/search";
-import { createUrlSchema, validPassword } from "@/app/lib/validators/clientValidators.ts/url";
+import {
+  createUrlSchema,
+  validPassword,
+} from "@/app/lib/validators/clientValidators.ts/url";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+import { authClient } from "@/app/lib/auth-client";
+import { ArrowRight } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
 
 interface Message {
   type: "error" | "success";
@@ -38,17 +47,23 @@ export default function Page({
   const [inUrl, setInUrl] = useState(url);
   const [urlSuccess, setUrlSuccess] = useState<Message | null>(null);
   const [slug, setSlug] = useState<string>("");
-  const [slugSuccess,setSlugSuccess] = useState<Message | null>(null);
+  const [slugSuccess, setSlugSuccess] = useState<Message | null>(null);
   const [passProtection, setPassProtection] = useState(false);
-  const [passwordSuccess,setPasswordSuccess] = useState<Message | null>(null);
+  const [passwordSuccess, setPasswordSuccess] = useState<Message | null>(null);
   const [password, setPassword] = useState<string>("");
   const [expirationEnabled, setExpirationEnabled] = useState(false);
   const [expirationDate, setExpirationDate] = useState<string>("");
-  const [expirationSuccess,setExpirationSuccess] = useState<Message | null>(null);
+  const [expirationSuccess, setExpirationSuccess] = useState<Message | null>(
+    null,
+  );
   const [analyticsEnabled, setAnalyticsEnabled] = useState(true);
-  const handleExpiration = ()=>{
-    console.log(expirationDate)
-  }
+  const [submiting, setSubmiting] = useState(true);
+  const handleSubmitting = () => {
+    setSubmiting(true);
+  };
+  const handleExpiration = () => {
+    console.log(expirationDate);
+  };
   const handleUrl = () => {
     // Handle form submission logic here
     try {
@@ -76,9 +91,9 @@ export default function Page({
       console.error("error:", error);
     }
   };
-  const handlePassword = ()=>{
+  const handlePassword = () => {
     // Handle form submission logic here
-    try{
+    try {
       const result = validPassword.safeParse(password);
       if (result.success) {
         setPasswordSuccess({
@@ -97,18 +112,78 @@ export default function Page({
         });
         console.log("Invalid Password:", result.error);
       }
-    }catch(error){
+    } catch (error) {
       console.error("error:", error);
     }
-    
-  }
+  };
+
+  // const handleCreate = async () => {
+  //   setLoading(true);
+  //   setFormError(null);
+  //   try {
+  //     // 1. Validate complete URL
+  //     const urlResult = createUrlSchema.safeParse({
+  //       originalUrl: normalizeUrl(inUrl),
+  //     });
+  //     if (!urlResult.success) {
+  //       const msg = urlResult.error.flatten().fieldErrors.originalUrl?.[0] ?? "Invalid URL";
+  //       setUrlSuccess({ type: "error", message: msg });
+  //       setLoading(false);
+  //       return;
+  //     }
+
+  //     // 2. Validate password if protection enabled
+  //     if (passProtection) {
+  //       const passResult = validPassword.safeParse(password);
+  //       if (!passResult.success) {
+  //         const msg = passResult.error.flatten().formErrors?.[0] ?? passResult.error.issues[0]?.message ?? "Invalid Password";
+  //         setPasswordSuccess({ type: "error", message: msg });
+  //         setLoading(false);
+  //         return;
+  //       }
+  //     }
+
+  //     // 3. Make POST request
+  //     const response = await fetch("/api/url", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         userId: session?.user?.id || "",
+  //         originalUrl: normalizeUrl(inUrl),
+  //         slug: slug,
+  //         password: passProtection ? password : '',
+  //         expiresAt: expirationEnabled && expirationDate ? new Date(expirationDate).toISOString() : undefined,
+  //       }),
+  //     });
+
+  //     const resData = await response.json();
+  //     if (!response.ok) {
+  //       throw new Error(resData.message || "Failed to create short URL");
+  //     }
+
+  //     // Success! Go to dashboard
+  //     router.push("/workspace/dashboard");
+  //   } catch (err: any) {
+  //     console.error(err);
+  //     setFormError(err.message || "Something went wrong. Please try again.");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   return (
     <main className="w-full min-h-[93vh]">
       <div className="w-full pt-3 lg:px-18 px-2 flex flex-col h-full">
-        <div className="text-4xl font-serif italic w-full">Create Url</div>
+        <div className="text-4xl font-serif italic w-full flex items-center justify-between">
+          Create Url
+          <Button type="button" variant="default" className="cursor-pointer">
+            {submiting ? <Spinner /> : <ArrowRight className="h-8 w-8" />}
+          </Button>
+        </div>
         <div className="mt-9 pl-1 font-extralight text-xs text-secondary/70 flex flex-col gap-8">
-          <div>
+          <div className="flex flex-col gap-2">
             <span className="pl-2">Complete Url</span>
             <InputInline
               type="url"
@@ -121,7 +196,7 @@ export default function Page({
             />
           </div>
           <div className="grid grid-cols-2 gap-3 w-full ">
-            <div>
+            <div className="flex flex-col gap-2">
               <span className="pl-2">slug</span>
               <div className="flex gap-2">
                 <InputInline
@@ -130,7 +205,6 @@ export default function Page({
                   placeholder="my-slug"
                   value={slug}
                   onChange={(value) => setSlug(value)}
-                  
                   MessageIncoming={{
                     type: "success",
                     message: "long url is not valid",
@@ -138,7 +212,7 @@ export default function Page({
                 />
               </div>
             </div>
-            <div>
+            <div className="flex flex-col gap-2">
               <span className="pl-2">Preview Url</span>
               <InputInline
                 type="preview"
@@ -159,9 +233,9 @@ export default function Page({
                     id="password-protection"
                     checked={passProtection}
                     onCheckedChange={(value) => {
-                      setPassProtection(value)
-                      setPassword("")
-                      setPasswordSuccess(null)
+                      setPassProtection(value);
+                      setPassword("");
+                      setPasswordSuccess(null);
                     }}
                     className={cn("cursor-pointer")}
                   />
@@ -174,7 +248,9 @@ export default function Page({
                     type="password"
                     placeholder="Enter password"
                     value={password}
-                    onChange={(value) => {setPassword(value)}}
+                    onChange={(value) => {
+                      setPassword(value);
+                    }}
                     icon={LockIcon}
                     disabled={!passProtection}
                     runningFunction={handlePassword}
@@ -188,11 +264,10 @@ export default function Page({
                   <Switch
                     id="Expiration"
                     checked={expirationEnabled}
-                    onCheckedChange={(value) =>{ 
-                      setExpirationEnabled(value)
-                      setExpirationDate("")
-                      setExpirationSuccess(null)
-
+                    onCheckedChange={(value) => {
+                      setExpirationEnabled(value);
+                      setExpirationDate("");
+                      setExpirationSuccess(null);
                     }}
                     className={cn("cursor-pointer")}
                   />
@@ -212,8 +287,8 @@ export default function Page({
                 </div>
               </div>
 
-              <div className="pl-2 flex w-full flex-col gap-8">
-                <div className="flex items-center space-x-2">
+              <div className="pl-2 lg:flex w-full flex-col gap-2 ">
+                <div className="lg:flex items-center space-x-2 hidden ">
                   <Switch
                     id="Analytics"
                     checked={analyticsEnabled}
@@ -222,9 +297,51 @@ export default function Page({
                   />
                   <Label htmlFor="Analytics">Analytics</Label>
                 </div>
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-4">
+                  <div className="lg:col-span-2 lg:block hidden">
+                    <AnalyticsComponent analyticsEnabled={analyticsEnabled} />
+                  </div>
+                  <div className="flex flex-col gap-3">
+                    <div className="border border-border/80 bg-card/60 backdrop-blur-md shadow-sm rounded-xl p-5 flex flex-col gap-4 h-full">
+                      <div>
+                        <h3 className=" flex items-center gap-1.5">
+                          QR Code Preview
+                        </h3>
+                      </div>
+                      <div className="flex-1 flex items-center justify-center py-4 bg-muted/10 rounded-lg border border-border/20">
+                        <QRCodeCard
+                          value={DEPLOYMENT_URL + "/" + (slug || "preview")}
+                        />
+                      </div>
+                      <div className="text-[10px] text-muted-foreground/80 break-all text-center font-mono">
+                        {DEPLOYMENT_URL}/{slug || "your-slug"}
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <AnalyticsComponent analyticsEnabled={analyticsEnabled} />
             </div>
+          </div>
+          {/* Submit and Cancel Buttons */}
+          <div className="flex items-center justify-end gap-3 mt-2 border-t border-border/50 mb-5 ">
+            <Button
+              type="button"
+              variant="outline"
+              className="cursor-pointer"
+              disabled={submiting}
+            >
+              Cancel
+            </Button>
+            <Button type="button" variant="default" className="cursor-pointer">
+              {submiting ? (
+                <>
+                  <Spinner className="mr-2 h-4 w-4" />
+                  Creating...
+                </>
+              ) : (
+                "Create URL"
+              )}
+            </Button>
           </div>
         </div>
       </div>
