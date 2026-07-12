@@ -23,3 +23,9 @@ export const updateUrlSchema = z.object({
 });
 
 export type updateUrlSchema = z.infer<typeof updateUrlSchema>;
+
+export const slugCheck = z.object({
+  slug: z.string(),
+});
+
+export type slugCheck = z.infer<typeof slugCheck>;

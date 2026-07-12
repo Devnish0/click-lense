@@ -22,7 +22,6 @@ export async function POST(request: Request) {
       );
     }
 
-
     // checking if the user is guest then we can limit the number of urls
     const user = await prisma.user.findUnique({
       where: {
@@ -41,7 +40,7 @@ export async function POST(request: Request) {
     const body = await request.json();
 
     const validateData = createUrlSchema.parse(body);
-
+    console.log("validateData is", validateData);
     const url = await prisma.url.create({
       data: {
         originalUrl: validateData.originalUrl,
@@ -121,7 +120,7 @@ export async function DELETE(request: Request) {
 }
 
 export async function PATCH(request: Request) {
- const session = await auth.api.getSession({ headers: request.headers });
+  const session = await auth.api.getSession({ headers: request.headers });
   if (!session?.session?.id) {
     return handleApiResponse(
       HttpStatus.UNAUTHORIZED,
