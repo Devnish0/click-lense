@@ -1,2 +1,2 @@
 export const NAME: string = "Clause";
-export const DEPLOYMENT_URL = "https://localhost.com";
+export const DEPLOYMENT_URL = process.env.BETTER_AUTH_URL;
