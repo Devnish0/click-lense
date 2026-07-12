@@ -1,10 +1,12 @@
 "use client";
 
 import { authClient } from "@/app/lib/auth-client";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function Login() {
   const { data: session, isPending } = authClient.useSession();
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState("");
@@ -12,12 +14,18 @@ export default function Login() {
   const [name, setName] = useState("");
   const [error, setError] = useState("");
 
+  useEffect(() => {
+    if (session) {
+      router.push("/workspace/dashboard");
+    }
+  }, [session, router]);
+
   const handleGoogleSignIn = async () => {
     setLoading(true);
     setError("");
     await authClient.signIn.social({
       provider: "google",
-      callbackURL: "/",
+      callbackURL: "/workspace/dashboard",
     });
     setLoading(false);
   };

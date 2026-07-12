@@ -1,5 +1,5 @@
 "use client";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { AppSidebar } from "@/components/app-sidebar";
 import {
   Breadcrumb,
@@ -15,14 +15,25 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { Separator } from "@base-ui/react";
+import { authClient } from "../lib/auth-client";
+import { useEffect } from "react";
 
 export default function HomeLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { data: session, isPending } = authClient.useSession();
+  const router = useRouter();
   let pathname = usePathname();
   const finalPath = pathname.split("/")[2];
+
+  useEffect(() => {
+    if (!isPending && !session) {
+      router.push("/");
+    }
+  }, [session, isPending, router]);
+
   return (
     <main className=" border  min-h-screen overflow-hidden bg-background flex">
       <SidebarProvider>
@@ -48,14 +59,6 @@ export default function HomeLayout({
               </BreadcrumbList>
             </Breadcrumb>
           </header>
-          {/* <div className="flex flex-1 flex-col gap-4 p-4">
-            <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-              <div className="aspect-video rounded-xl bg-muted/50" />
-              <div className="aspect-video rounded-xl bg-muted/50" />
-              <div className="aspect-video rounded-xl bg-muted/50" />
-            </div>
-            <div className="min-h-screen flex-1 rounded-xl bg-muted/50 md:min-h-min" />
-          </div> */}
           {children}
         </SidebarInset>
       </SidebarProvider>
