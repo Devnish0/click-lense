@@ -3,6 +3,7 @@
 import { authClient } from "@/app/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Login() {
   const { data: session, isPending } = authClient.useSession();
@@ -73,53 +74,68 @@ export default function Login() {
   return (
     <div className="w-full max-w-md rounded-2xl border border-border bg-card p-6 text-card-foreground shadow-[0_20px_50px_rgba(0,0,0,0.12)] sm:p-8">
       {isPending ? (
-        <p className="text-sm text-muted-foreground">Loading...</p>
+        <div className="space-y-4">
+          <div className="flex gap-4 border-b border-border pb-3">
+            <Skeleton className="h-8 w-20" />
+            <Skeleton className="h-8 w-20" />
+          </div>
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-12" />
+            <Skeleton className="h-10 w-full" />
+          </div>
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-16" />
+            <Skeleton className="h-10 w-full" />
+          </div>
+          <Skeleton className="h-11 w-full mt-6" />
+        </div>
       ) : session ? (
-        <>
-          <div className="flex items-center gap-4">
-            {session.user.image && (
-              <img
-                src={session.user.image}
-                alt="avatar"
-                width={48}
-                height={48}
-                className="h-12 w-12 rounded-full object-cover"
-              />
-            )}
-            <div>
-              <p className="text-lg font-semibold">{session.user.name}</p>
-              <p className="text-sm text-muted-foreground">
-                {session.user.email}
-              </p>
+        <div className="flex flex-col items-center justify-center text-center py-4">
+          {session.user.image ? (
+            <img
+              src={session.user.image}
+              alt="avatar"
+              width={64}
+              height={64}
+              className="h-16 w-16 rounded-full border-2 border-primary object-cover shadow-sm mb-4"
+            />
+          ) : (
+            <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+              <span className="text-xl font-bold text-primary">
+                {session.user.name?.charAt(0).toUpperCase()}
+              </span>
             </div>
+          )}
+          
+          <h2 className="text-xl font-semibold text-foreground mb-1">
+            Welcome back, {session.user.name}!
+          </h2>
+          <p className="text-sm text-muted-foreground mb-6">
+            {session.user.email}
+          </p>
+
+          <div className="flex items-center gap-2 text-xs font-light text-muted-foreground mb-6 bg-primary/5 px-3 py-1.5 rounded-full border border-primary/10">
+            <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+            Redirecting to dashboard...
           </div>
 
-          <div className="mb-3 rounded-lg border border-border bg-muted/40 px-4 py-3">
-            <p className="mb-1 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              Session ID
-            </p>
-            <code className="break-all font-mono text-xs text-foreground">
-              {session.session.id}
-            </code>
+          <div className="w-full space-y-3">
+            <button
+              onClick={() => router.push("/workspace/dashboard")}
+              className="flex w-full items-center justify-center rounded-lg bg-primary px-4 py-3 text-sm font-medium text-primary-foreground hover:bg-primary/95 transition-all shadow-sm cursor-pointer"
+            >
+              Go to Dashboard
+            </button>
+            
+            <button
+              onClick={handleSignOut}
+              disabled={loading}
+              className="flex w-full items-center justify-center rounded-lg border border-border bg-background px-4 py-3 text-sm font-medium text-muted-foreground hover:bg-muted/50 hover:text-foreground transition-all disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
+            >
+              {loading ? "Signing out..." : "Sign Out"}
+            </button>
           </div>
-
-          <div className="mb-4 rounded-lg border border-border bg-muted/40 px-4 py-3">
-            <p className="mb-1 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              User ID
-            </p>
-            <code className="break-all font-mono text-xs text-foreground">
-              {session.user.id}
-            </code>
-          </div>
-
-          <button
-            onClick={handleSignOut}
-            disabled={loading}
-            className="flex w-full items-center justify-center rounded-lg border border-border bg-muted px-4 py-3 text-sm font-medium text-muted-foreground transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {loading ? "Signing out..." : "Sign Out"}
-          </button>
-        </>
+        </div>
       ) : (
         <>
           <div className="mb-6 flex w-full border-b border-border">

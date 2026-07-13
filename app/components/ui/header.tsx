@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { NAME } from "@/lib/constant";
 import Link from "next/link";
 import { ThemeToggle } from "@/app/theme-toggle";
 import { AlignRight, AlignRightIcon, MoveRight } from "lucide-react";
+import { cn } from "@/lib/utils";
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -57,27 +58,37 @@ export default function Header() {
 
         {/* Desktop Action Buttons */}
         <div className="hidden lg:flex items-center gap-3">
-          <Button
-            variant="outline"
-            className="border-2 border-border bg-transparent text-primary hover:bg-muted font-semibold transition-all"
+          <Link
+            href="/login"
+            className={cn(
+              buttonVariants({ variant: "outline" }),
+              "border-2 border-border bg-transparent text-primary hover:bg-muted font-semibold transition-all cursor-pointer"
+            )}
           >
-            <Link href="/login">Login</Link>
-          </Button>
-          <Button className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold transition-all">
-            <Link href="/login">Start now</Link>
-          </Button>
+            Login
+          </Link>
+          <Link
+            href="/login"
+            className={cn(
+              buttonVariants({ variant: "default" }),
+              "bg-primary text-primary-foreground hover:bg-primary/90 font-semibold transition-all cursor-pointer"
+            )}
+          >
+            Start now
+          </Link>
         </div>
 
         {/* Mobile Hamburger Button */}
-        <Button
-          size={"icon-sm"}
+        <Link
+          href="/login"
           onClick={() => setIsOpen(false)}
-          className="lg:hidden bg-primary text-primary-foreground hover:bg-primary/90 font-semibold py-2 "
+          className={cn(
+            buttonVariants({ variant: "default", size: "icon-sm" }),
+            "lg:hidden bg-primary text-primary-foreground hover:bg-primary/90 font-semibold py-2 cursor-pointer"
+          )}
         >
-          <Link href={"/login"}>
-            <MoveRight />
-          </Link>
-        </Button>
+          <MoveRight />
+        </Link>
         <button
           onClick={() => setIsOpen(!isOpen)}
           type="button"
@@ -152,19 +163,26 @@ export default function Header() {
             </a>
           </nav>
           <div className="flex flex-col gap-3">
-            <Button
-              variant="outline"
+            <Link
+              href="/login"
               onClick={() => setIsOpen(false)}
-              className="w-full border-2 border-border bg-transparent text-primary hover:bg-muted font-semibold py-5"
+              className={cn(
+                buttonVariants({ variant: "outline" }),
+                "w-full border-2 border-border bg-transparent text-primary hover:bg-muted font-semibold py-5 cursor-pointer text-center"
+              )}
             >
               Login
-            </Button>
-            <Button
+            </Link>
+            <Link
+              href="/login"
               onClick={() => setIsOpen(false)}
-              className="w-full bg-primary text-primary-foreground hover:bg-primary/90 font-semibold py-5"
+              className={cn(
+                buttonVariants({ variant: "default" }),
+                "w-full bg-primary text-primary-foreground hover:bg-primary/90 font-semibold py-5 cursor-pointer text-center"
+              )}
             >
               Start now
-            </Button>
+            </Link>
           </div>
         </div>
       </div>

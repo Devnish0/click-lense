@@ -76,7 +76,10 @@ export async function GET(request: Request) {
         shortCode:true,
         originalUrl:true,
         password:true,
-        expiresAt:true,
+        createdAt:true
+      },
+      orderBy:{
+        createdAt:"desc"
       }
     });
     return handleApiResponse(HttpStatus.OK, "success", { userUrls });

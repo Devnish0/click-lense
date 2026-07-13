@@ -5,12 +5,13 @@ import { InputInline } from "@/components/search";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import formatRelativeDate from "@/app/lib/dateFormatter";
 
 interface userUrl {
   shortCode: string;
   originalUrl: string;
   password?: string | null;
-  expiresAt?: string | null;
+  createdAt?: Date | string | number | undefined | null;
 }
 
 function LinkSkeleton() {
@@ -81,8 +82,9 @@ export default function Page() {
       try {
         const response = await axios.get("/api/url");
         console.log(response);
-        setUserUrls(response.data?.data?.userUrls || []);
-      } catch (error) {
+        const userUrls = response.data?.data?.userUrls as userUrl[];
+        setUserUrls(userUrls || []);
+      } catch (error) {   
         console.error("Failed to fetch user URLs:", error);
         setUserUrls([]);
       } finally {
@@ -118,11 +120,7 @@ export default function Page() {
                   <LinkComponent
                     key={link.shortCode}
                     Password={!!link.password}
-                    expiresAt={
-                      link.expiresAt
-                        ? new Date(link.expiresAt).toLocaleDateString()
-                        : "Never"
-                    }
+                    createdAt={link.createdAt}
                     originalURL={link.originalUrl}
                     shortcode={link.shortCode}
                   />

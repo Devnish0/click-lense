@@ -3,8 +3,14 @@
 import { DEPLOYMENT_URL } from "@/lib/constant";
 import { cn } from "@/lib/utils";
 import QRCodeCard from "@/app/lib/qrgenerator";
-import { Button } from "@base-ui/react";
 import { useEffect, useRef, useState, type MouseEvent } from "react";
+import formatRelativeDate from "@/app/lib/dateFormatter";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import {
   Clock,
   ClosedCaption,
@@ -23,7 +29,7 @@ export interface InputLinkData {
   shortcode: string;
   originalURL: string;
   Password: boolean;
-  expiresAt: string;
+  createdAt: Date | string | number | null | undefined;
 }
 
 const LINK_ICON_SVGS = [
@@ -68,7 +74,7 @@ function pickSvgByShortcode(shortcode: string): string {
 
 export default function LinkComponent({
   Password,
-  expiresAt,
+  createdAt,
   originalURL,
   shortcode,
 }: InputLinkData) {
@@ -81,6 +87,16 @@ export default function LinkComponent({
   const [isQrHovered, setIsQrHovered] = useState(false);
   const [isQrPinned, setIsQrPinned] = useState(false);
   const isQrOpen = isQrHovered || isQrPinned;
+
+  const [copiedOriginal, setCopiedOriginal] = useState(false);
+
+  const handleCopyOriginalUrl = async (e: MouseEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    await navigator.clipboard.writeText(originalURL);
+    setCopiedOriginal(true);
+    setTimeout(() => setCopiedOriginal(false), 2000);
+  };
 
   const handleCopyShortUrl = async () => {
     await navigator.clipboard.writeText(shortUrl);
@@ -151,8 +167,8 @@ export default function LinkComponent({
   return (
     <>
       <div className="flex flex-col p-3 border-b">
-        <div className="flex items-center justify-between w-full">
-          <div className="flex gap-2 items-center">
+        <div className="flex items-center justify-between w-full min-w-0">
+          <div className="flex gap-2 items-center min-w-0">
             <span>
               <span
                 className="block size-11 bg-primary"
@@ -168,11 +184,33 @@ export default function LinkComponent({
                 }}
               />
             </span>
-            <div className="flex flex-col">
+            <div className="flex flex-col min-w-0">
               <div className="text-[16px] text-secondary">{shortcode}</div>
-              <div className="text-xs font-light text-secondary/70">
-                {originalURL}
-              </div>
+              <TooltipProvider delay={200}>
+                <Tooltip>
+                  <TooltipTrigger
+                    render={
+                      <div
+                        role="button"
+                        onClick={handleCopyOriginalUrl}
+                        className="text-xs font-light text-secondary/70 truncate max-w-[150px] sm:max-w-[250px] md:max-w-sm lg:max-w-md cursor-pointer hover:text-primary transition-colors select-all"
+                      />
+                    }
+                  >
+                    {originalURL}
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-md break-all flex flex-col items-center p-2.5">
+                    {copiedOriginal ? (
+                      <span className="font-semibold text-emerald-400">Copied!</span>
+                    ) : (
+                      <div className="flex flex-col gap-1 text-center">
+                        <span className="font-medium opacity-90">{originalURL}</span>
+                        <span className="text-[10px] opacity-60">Click to copy</span>
+                      </div>
+                    )}
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
           </div>
           <div className="flex items-center justify-center">
@@ -184,7 +222,7 @@ export default function LinkComponent({
               <span className="text-xs lg:text-[12px]">{shortUrl}</span>
             </Link>
             <span className="hidden lg:inline-flex px-2 py-1 text-xs text-secondary/70 mr-10 lg:text-[11px]">
-              {expiresAt}
+              {formatRelativeDate(createdAt)}
             </span>
             <span className="flex items-center gap-3">
               <span
@@ -276,14 +314,12 @@ export default function LinkComponent({
                 size={15}
                 className={Password ? "text-primary" : "text-secondary/50"}
               />
-              <Button
-                type="button"
-                className="pl-3 pr-3 pt-2 pb-2 rounded-lg border border-border/70 bg-primary text-primary-foreground hover:bg-primary/90 focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background"
+              <Link
+                href="/"
+                className="inline-flex items-center justify-center pl-3 pr-3 pt-2 pb-2 rounded-lg border border-border/70 bg-primary text-primary-foreground hover:bg-primary/90 focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background cursor-pointer"
               >
-                <Link href="/">
-                  <Pen size={19} />
-                </Link>
-              </Button>
+                <Pen size={19} />
+              </Link>
             </span>
           </div>
         </div>
@@ -296,7 +332,7 @@ export default function LinkComponent({
             <span className="text-xs">{shortUrl}</span>
           </Link>
           <span className="px-2 py-1 text-xs text-secondary/70">
-            {expiresAt}
+            {formatRelativeDate(createdAt)}
           </span>
         </span>
       </div>
