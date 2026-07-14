@@ -7,6 +7,7 @@ import Link from "next/link";
 import { ThemeToggle } from "@/app/theme-toggle";
 import { AlignRight, AlignRightIcon, MoveRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import Logo from "../logo";
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -15,9 +16,7 @@ export default function Header() {
       <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-5 sm:px-6 py-2 md:py-3.5 bg-card/70 backdrop-blur-md lg:rounded-2xl border border-border/50 shadow-sm transition-all duration-300">
         {/* Logo and Brand */}
         <div className="flex items-center gap-2">
-          <span className="h-7 w-7 rounded-lg bg-primary flex items-center justify-center text-primary-foreground font-black text-sm select-none">
-            C
-          </span>
+          <Logo/>
           <span className="text-xl font-bold tracking-tight text-foreground sm:text-2xl cursor-pointer">
             {NAME}
           </span>

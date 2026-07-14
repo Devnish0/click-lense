@@ -1,4 +1,3 @@
-import { NextResponse } from "next/server";
 import {
   createUrlSchema,
   deleteUrlSchema,
@@ -8,8 +7,6 @@ import { prisma } from "@/app/lib/prisma";
 import { HttpStatus } from "@/app/lib/httpStatus";
 import { handleApiError } from "@/app/lib/handleError";
 import { handleApiResponse } from "@/app/lib/handleResponse";
-import { cookies } from "next/headers";
-import jwt from "jsonwebtoken";
 import { auth } from "@/app/lib/auth";
 
 export async function POST(request: Request) {
@@ -100,11 +97,6 @@ export async function DELETE(request: Request) {
   }
   try {
     if (session?.session?.id) {
-      // const data = jwt.verify(token.value, process.env.JWT_SECRET!) as {
-      //   UserToken: {
-      //     id: string;
-      //   };
-      // };
       const body = await request.json();
       const validateData = deleteUrlSchema.parse(body);
       const deletedUserUrl = await prisma.url.delete({
@@ -135,11 +127,6 @@ export async function PATCH(request: Request) {
   }
   try {
     if (session?.session?.id) {
-      // const data = jwt.verify(token.value, process.env.JWT_SECRET!) as {
-      //   UserToken: {
-      //     id: string;
-      //   };
-      // };
       const body = await request.json();
       const validateData = updateUrlSchema.parse(body);
       const updatedUserUrl = await prisma.url.update({

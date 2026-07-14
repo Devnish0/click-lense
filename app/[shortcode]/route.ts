@@ -4,6 +4,7 @@ import { HttpStatus } from "../lib/httpStatus";
 import { handleApiResponse } from "../lib/handleResponse";
 import { handleApiError } from "../lib/handleError";
 import { collectAnalytics } from "../lib/analytics";
+import { notFound } from "next/navigation";
 
 export async function GET(
   request: Request,
@@ -15,7 +16,7 @@ export async function GET(
       where: {
         shortCode: shortcode,
       },
-      select:{
+      select:{  
         id:true,
         expiresAt:true,
         password:true,
@@ -24,10 +25,13 @@ export async function GET(
       }
     });
     if (!url) {
-      return handleApiResponse(HttpStatus.NOT_FOUND,"url doesnt exists")
+      return NextResponse.redirect(new URL("/error/notfound", request.url));
+      //  handleApiResponse(HttpStatus.NOT_FOUND,"url doesnt exists")
+      
     }
     if(url.expiresAt && url.expiresAt < new Date()){
-      return handleApiResponse(HttpStatus.NOT_FOUND,"Url has expired")
+      return NextResponse.redirect(new URL(`/error/expired?code=${shortcode}`, request.url));
+      // handleApiResponse(HttpStatus.NOT_FOUND,"Url has expired")
     }
 
     if(url.password){
@@ -35,13 +39,12 @@ export async function GET(
     }
 
     if(url.maxClicks && url.maxClicks<=url.clicks){
-      return handleApiResponse(HttpStatus.NOT_FOUND,"Url has reached max clicks")
+      return NextResponse.redirect(new URL(`/error/maxclicks?code=${shortcode}`, request.url));
+      // handleApiResponse(HttpStatus.NOT_FOUND,"Url has reached max clicks")
     }
 
-    // Collect analytics from request headers
     const analytics = collectAnalytics(request);
 
-    // Increment clicks + store analytics event in a single transaction
     const [updatedUrl] = await prisma.$transaction([
       prisma.url.update({
         where: { shortCode: shortcode },

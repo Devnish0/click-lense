@@ -1,7 +1,12 @@
 "use client";
 // import LinkComponent from "@/components/linkcomponent";
 import LinkComponent from "@/components/linkcomponent";
-import { InputInline } from "@/components/search";
+import { normalizeUrl } from "@/components/search";
+import { InputInline } from "@/components/form/inputinline";
+import { Link01Icon } from "@hugeicons/core-free-icons";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+import { createUrlSchemaClient } from "@/app/lib/validators/clientValidators.ts/url";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -74,6 +79,9 @@ function LinkSkeleton() {
 }
 
 export default function Page() {
+  const router = useRouter();
+  const [quickUrl, setQuickUrl] = useState("");
+  const [quickUrlError, setQuickUrlError] = useState<{ type: "error" | "success"; message: string } | null>(null);
   const [userUrls, setUserUrls] = useState<userUrl[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   useEffect(() => {
@@ -99,10 +107,39 @@ export default function Page() {
         <div className="w-full pt-3 lg:px-18 px-2 flex flex-col h-full border ">
           <div className="text-4xl font-serif italic w-full">Your URLs</div>
           <div className=" hidden w-full border-t border-secondary/20"></div>
-          <div className="w-full mt-7">
-            <span className="w-20">
-              <InputInline />
-            </span>
+          <div className="w-full mt-7 flex gap-3 max-w-xl">
+            <div className="flex-1">
+              <InputInline
+                placeholder="Paste a link to shorten..."
+                value={quickUrl}
+                onChange={(val) => {
+                  setQuickUrl(val);
+                  setQuickUrlError(null);
+                }}
+                icon={Link01Icon}
+                MessageIncoming={quickUrlError}
+              />
+            </div>
+            <Button
+              className="cursor-pointer px-6"
+              onClick={() => {
+                const result = createUrlSchemaClient.safeParse({
+                  originalUrl: normalizeUrl(quickUrl),
+                });
+                if (result.success) {
+                  router.push(
+                    `/workspace/create?url=${encodeURIComponent(result.data.originalUrl)}`,
+                  );
+                } else {
+                  const message =
+                    result.error.flatten().fieldErrors.originalUrl?.[0] ??
+                    result.error.issues[0]?.message;
+                  setQuickUrlError({ type: "error", message: message || "Invalid URL" });
+                }
+              }}
+            >
+              Shorten
+            </Button>
           </div>
           <div className="mt-3 pl-1 font-extralight text-xs text-secondary/70">
             Projects

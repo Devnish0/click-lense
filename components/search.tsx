@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Search01Icon } from "@hugeicons/core-free-icons";
 import { useState, useEffect, useRef } from "react";
-import { createUrlSchema } from "@/app/lib/validators/clientValidators.ts/url";
+import { createUrlSchemaClient } from "@/app/lib/validators/clientValidators.ts/url";
 import { CircleAlertIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -55,7 +55,7 @@ export function InputInline() {
   const handleSubmit = () => {
     // Handle form submission logic here
     try {
-      const result = createUrlSchema.safeParse({
+      const result = createUrlSchemaClient.safeParse({
         originalUrl: normalizeUrl(url),
       });
       if (result.success) {

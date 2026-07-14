@@ -24,6 +24,7 @@ import {
   X,
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export interface InputLinkData {
   shortcode: string;
@@ -78,6 +79,7 @@ export default function LinkComponent({
   originalURL,
   shortcode,
 }: InputLinkData) {
+  const router = useRouter();
   const cleanCode = shortcode.trim();
   const shortPath = `/${encodeURIComponent(cleanCode)}`;
   const shortUrl = `${DEPLOYMENT_URL.replace(/\/$/, "")}/${encodeURIComponent(cleanCode)}`;
@@ -166,7 +168,10 @@ export default function LinkComponent({
 
   return (
     <>
-      <div className="flex flex-col p-3 border-b">
+      <div className="flex flex-col p-3 border-b cursor-pointer" onClick={() => {
+        router.push(`/dashboard/link/${shortcode}`)
+      }}>
+
         <div className="flex items-center justify-between w-full min-w-0">
           <div className="flex gap-2 items-center min-w-0">
             <span>
@@ -216,6 +221,7 @@ export default function LinkComponent({
           <div className="flex items-center justify-center">
             <Link
               href={shortPath}
+              onClick={(e) => e.stopPropagation()}
               className="hidden lg:inline-flex w-fit items-center gap-1 border rounded-3xl border-border px-2 py-1"
             >
               <ExternalLink size={14} />
@@ -233,7 +239,10 @@ export default function LinkComponent({
               >
                 <button
                   type="button"
-                  onClick={() => setIsQrPinned((current) => !current)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsQrPinned((current) => !current);
+                  }}
                   aria-expanded={isQrOpen}
                   aria-label="Show QR code"
                   className={cn(
@@ -316,6 +325,7 @@ export default function LinkComponent({
               />
               <Link
                 href="/"
+                onClick={(e) => e.stopPropagation()}
                 className="inline-flex items-center justify-center pl-3 pr-3 pt-2 pb-2 rounded-lg border border-border/70 bg-primary text-primary-foreground hover:bg-primary/90 focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background cursor-pointer"
               >
                 <Pen size={19} />
@@ -326,6 +336,7 @@ export default function LinkComponent({
         <span className="lg:hidden inline-flex w-fit mt-3 flex-col">
           <Link
             href={shortPath}
+            onClick={(e) => e.stopPropagation()}
             className="inline-flex w-fit items-center gap-1 border rounded-3xl border-border px-2 py-1"
           >
             <ExternalLink size={14} />
