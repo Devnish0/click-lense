@@ -77,7 +77,7 @@ export function InputInline({
   }, [MessageIncoming]);
 
   useEffect(() => {
-    if (message?.type==="error") {
+    if (message?.type === "error") {
       setShowTooltip(true);
       if (timerRef.current) {
         clearTimeout(timerRef.current);
@@ -104,7 +104,7 @@ export function InputInline({
     <Field
       onBlur={runningFunction as React.FocusEventHandler<HTMLInputElement>}
       orientation="horizontal"
-      className="transition-all duration-200"
+      className="transition-all duration-200 "
       suppressHydrationWarning
     >
       <div className={`relative flex-1`}>
@@ -126,15 +126,20 @@ export function InputInline({
         <Input
           type={
             type === "datetime-local"
-              ? (isFocused ? "datetime-local" : "text")
-              : (type === "preview" ? "text" : type)
+              ? isFocused
+                ? "datetime-local"
+                : "text"
+              : type === "preview"
+                ? "text"
+                : type
           }
           disabled={disabled || type === "preview"}
           placeholder={placeholder || "Enter your long URL here"}
           className={cn(
             icon ? "pl-9" : "pl-3",
             "text-sm lg:text-md",
-            type === "datetime-local" && "[&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none cursor-pointer"
+            type === "datetime-local" &&
+              "[&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none cursor-pointer",
           )}
           value={
             type === "datetime-local" && !isFocused

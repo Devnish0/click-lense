@@ -16,30 +16,35 @@ export async function GET(
       where: {
         shortCode: shortcode,
       },
-      select:{  
-        id:true,
-        expiresAt:true,
-        password:true,
-        maxClicks:true,
-        clicks:true
-      }
+      select: {
+        id: true,
+        expiresAt: true,
+        password: true,
+        maxClicks: true,
+        clicks: true,
+      },
     });
     if (!url) {
       return NextResponse.redirect(new URL("/error/notfound", request.url));
       //  handleApiResponse(HttpStatus.NOT_FOUND,"url doesnt exists")
-      
     }
-    if(url.expiresAt && url.expiresAt < new Date()){
-      return NextResponse.redirect(new URL(`/error/expired?code=${shortcode}`, request.url));
+    if (url.expiresAt && url.expiresAt < new Date()) {
+      return NextResponse.redirect(
+        new URL(`/error/expired?code=${shortcode}`, request.url),
+      );
       // handleApiResponse(HttpStatus.NOT_FOUND,"Url has expired")
     }
 
-    if(url.password){
-      return NextResponse.redirect(new URL(`/unlock/${shortcode}`,request.url))
+    if (url.password) {
+      return NextResponse.redirect(
+        new URL(`/unlock?code=${shortcode}`, request.url),
+      );
     }
 
-    if(url.maxClicks && url.maxClicks<=url.clicks){
-      return NextResponse.redirect(new URL(`/error/maxclicks?code=${shortcode}`, request.url));
+    if (url.maxClicks && url.maxClicks <= url.clicks) {
+      return NextResponse.redirect(
+        new URL(`/error/maxclicks?code=${shortcode}`, request.url),
+      );
       // handleApiResponse(HttpStatus.NOT_FOUND,"Url has reached max clicks")
     }
 
@@ -64,9 +69,9 @@ export async function GET(
       }),
     ]);
 
-    return NextResponse.redirect(updatedUrl.originalUrl)
+    return NextResponse.redirect(updatedUrl.originalUrl);
   } catch (error) {
-    console.log(error,"error from the [shortcode] route")
-    return handleApiError(error)
+    console.log(error, "error from the [shortcode] route");
+    return handleApiError(error);
   }
 }

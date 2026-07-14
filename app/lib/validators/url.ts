@@ -29,3 +29,10 @@ export const slugCheck = z.object({
 });
 
 export type slugCheck = z.infer<typeof slugCheck>;
+
+export const unlockUrl = z.object({
+  slug: z.string(),
+  Password: z.string(),
+});
+
+export type unlockUrl = z.infer<typeof unlockUrl>;
