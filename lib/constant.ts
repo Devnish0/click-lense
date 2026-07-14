@@ -1,4 +1,4 @@
-export const NAME: string = "Clause";
+export const NAME: string = "Snyp";
 export const DEPLOYMENT_URL =
   process.env.NEXT_PUBLIC_BETTER_AUTH_URL ||
   process.env.BETTER_AUTH_URL ||
