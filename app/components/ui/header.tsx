@@ -16,9 +16,10 @@ export default function Header() {
       <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-5 sm:px-6 py-2 md:py-3.5 bg-card/70 backdrop-blur-md lg:rounded-2xl border border-border/50 shadow-sm transition-all duration-300">
         {/* Logo and Brand */}
         <div className="flex items-center gap-2">
-          <Logo/>
+          <Logo />
           <span className="text-xl font-bold tracking-tight text-foreground sm:text-2xl cursor-pointer">
             {NAME}
+            <span className="text-primary">.</span>
           </span>
         </div>
         <div className="flex items-center gap-3">
@@ -61,7 +62,7 @@ export default function Header() {
             href="/login"
             className={cn(
               buttonVariants({ variant: "outline" }),
-              "border-2 border-border bg-transparent text-primary hover:bg-muted font-semibold transition-all cursor-pointer"
+              "border-2 border-border bg-transparent text-primary hover:bg-muted font-semibold transition-all cursor-pointer",
             )}
           >
             Login
@@ -70,7 +71,7 @@ export default function Header() {
             href="/login"
             className={cn(
               buttonVariants({ variant: "default" }),
-              "bg-primary text-primary-foreground hover:bg-primary/90 font-semibold transition-all cursor-pointer"
+              "bg-primary text-primary-foreground hover:bg-primary/90 font-semibold transition-all cursor-pointer",
             )}
           >
             Start now
@@ -83,7 +84,7 @@ export default function Header() {
           onClick={() => setIsOpen(false)}
           className={cn(
             buttonVariants({ variant: "default", size: "icon-sm" }),
-            "lg:hidden bg-primary text-primary-foreground hover:bg-primary/90 font-semibold py-2 cursor-pointer"
+            "lg:hidden bg-primary text-primary-foreground hover:bg-primary/90 font-semibold py-2 cursor-pointer",
           )}
         >
           <MoveRight />
@@ -167,7 +168,7 @@ export default function Header() {
               onClick={() => setIsOpen(false)}
               className={cn(
                 buttonVariants({ variant: "outline" }),
-                "w-full border-2 border-border bg-transparent text-primary hover:bg-muted font-semibold py-5 cursor-pointer text-center"
+                "w-full border-2 border-border bg-transparent text-primary hover:bg-muted font-semibold py-5 cursor-pointer text-center",
               )}
             >
               Login
@@ -177,7 +178,7 @@ export default function Header() {
               onClick={() => setIsOpen(false)}
               className={cn(
                 buttonVariants({ variant: "default" }),
-                "w-full bg-primary text-primary-foreground hover:bg-primary/90 font-semibold py-5 cursor-pointer text-center"
+                "w-full bg-primary text-primary-foreground hover:bg-primary/90 font-semibold py-5 cursor-pointer text-center",
               )}
             >
               Start now

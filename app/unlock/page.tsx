@@ -3,6 +3,7 @@ import Logo from "../components/logo";
 import Link from "next/link";
 import Footer from "../components/ui/footer";
 import PassComponent from "./passcomponent";
+import ErrorHeader from "../components/errorHeader";
 
 export default async function ExpiredPage({
   searchParams,
@@ -14,9 +15,7 @@ export default async function ExpiredPage({
   return (
     <>
       <main className="w-full h-screen flex flex-col ">
-        <header className="w-full h-16 border flex items-center justify-center font-extrabold bg-card/80 font-sans text-3xl ">
-          {NAME}
-        </header>
+        <ErrorHeader />
         <div className="flex flex-col gap-3 items-center grow border">
           <Link href="/" className="mt-20">
             <Logo size="lg" />

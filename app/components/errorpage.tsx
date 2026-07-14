@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { use, useEffect, useState } from "react";
 import Footer from "./ui/footer";
+import ErrorHeader from "./errorHeader";
 
 interface errorpageTypes {
   type: "notfound" | "expired" | "maxclicks";
@@ -33,9 +34,8 @@ export default function Errorpage({ type, code }: errorpageTypes) {
   return (
     <>
       <main className="w-full h-screen flex flex-col ">
-        <header className="w-full h-16 border flex items-center justify-center font-extrabold bg-card/80 font-sans text-3xl ">
-          {NAME}
-        </header>
+        <ErrorHeader />
+
         <div className="flex flex-col gap-3 items-center  grow border">
           <Link href="/" className="mt-50">
             <Logo size="lg" />
