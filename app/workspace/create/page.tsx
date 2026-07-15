@@ -234,7 +234,10 @@ export default function Page({
             {submitting ? <Spinner /> : <ArrowRight className="h-8 w-8" />}
           </Button>
         </div>
-        <div className="mt-9 pl-1 font-extralight text-xs text-secondary/70 flex flex-col gap-8">
+        <div
+          className="mt-9 pl-1 font-extralight text-xs text-secondary/70 flex flex-col gap-8"
+          suppressHydrationWarning
+        >
           <div className="flex flex-col gap-2">
             <span className="pl-2">Complete Url</span>
             <InputInline

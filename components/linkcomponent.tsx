@@ -168,10 +168,12 @@ export default function LinkComponent({
 
   return (
     <>
-      <div className="flex flex-col p-3 border-b cursor-pointer" onClick={() => {
-        router.push(`/dashboard/link/${shortcode}`)
-      }}>
-
+      <div
+        className="flex flex-col p-3 border-b cursor-pointer"
+        onClick={() => {
+          router.push(`/workspace/analytics/${shortcode}`);
+        }}
+      >
         <div className="flex items-center justify-between w-full min-w-0">
           <div className="flex gap-2 items-center min-w-0">
             <span>
@@ -206,11 +208,17 @@ export default function LinkComponent({
                   </TooltipTrigger>
                   <TooltipContent className="max-w-md break-all flex flex-col items-center p-2.5">
                     {copiedOriginal ? (
-                      <span className="font-semibold text-emerald-400">Copied!</span>
+                      <span className="font-semibold text-emerald-400">
+                        Copied!
+                      </span>
                     ) : (
                       <div className="flex flex-col gap-1 text-center">
-                        <span className="font-medium opacity-90">{originalURL}</span>
-                        <span className="text-[10px] opacity-60">Click to copy</span>
+                        <span className="font-medium opacity-90">
+                          {originalURL}
+                        </span>
+                        <span className="text-[10px] opacity-60">
+                          Click to copy
+                        </span>
                       </div>
                     )}
                   </TooltipContent>

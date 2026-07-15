@@ -79,7 +79,7 @@ export function InputInline() {
     // console.log(params.toString());
   };
   return (
-    <Field orientation="horizontal" className="transition-all duration-200">
+    <Field orientation="horizontal" className="transition-all duration-200" suppressHydrationWarning>
       <div className="relative flex-1">
         <HugeiconsIcon
           icon={Search01Icon}

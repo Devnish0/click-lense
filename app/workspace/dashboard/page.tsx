@@ -108,7 +108,7 @@ export default function Page() {
         <div className="w-full pt-3 lg:px-18 px-2 flex flex-col h-full border ">
           <div className="text-4xl font-serif italic w-full">Your URLs</div>
           <div className=" hidden w-full border-t border-secondary/20"></div>
-          <div className="w-full mt-7 flex gap-3">
+          <div className="w-full mt-7 flex gap-3" suppressHydrationWarning>
             <div className="flex-1 ">
               <InputInline
                 placeholder="Paste a link to shorten..."

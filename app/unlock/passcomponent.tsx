@@ -1,27 +1,22 @@
 "use client";
 import { Button, buttonVariants } from "@/components/ui/button";
-import Footer from "../components/ui/footer";
 import {
   Card,
-  CardAction,
   CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { KeyRound } from "lucide-react";
-import { useState } from "react";
-import Link from "next/link";
-import { cn } from "@/lib/utils";
-import { unlockUrl } from "../lib/validators/url";
-import LinkComponent from "@/components/linkcomponent";
-import { InputInline } from "@/components/form/inputinline";
-import axios from "axios";
+import { Label } from "@/components/ui/label";
 import { Spinner } from "@/components/ui/spinner";
-import { HttpStatus } from "../lib/httpStatus";
+import { cn } from "@/lib/utils";
+import axios from "axios";
+import { KeyRound } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
+import { unlockUrl } from "../lib/validators/url";
 
 export default function PassComponent({ slug }: { slug: string }) {
   const [password, setPassword] = useState("");
@@ -50,6 +45,7 @@ export default function PassComponent({ slug }: { slug: string }) {
       const errorMessage =
         err.response?.data?.message || "An error occurred. Please try again.";
       setError(errorMessage);
+      window.location.href = `/${slug}`;
     } finally {
       setLoading(false);
     }
@@ -67,7 +63,7 @@ export default function PassComponent({ slug }: { slug: string }) {
           please contact the link owner.
         </CardDescription>
       </CardHeader>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} suppressHydrationWarning>
         <CardContent>
           <div className="flex flex-col gap-2">
             <div className="grid gap-2">

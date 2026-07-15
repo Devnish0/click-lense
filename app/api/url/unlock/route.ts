@@ -1,9 +1,9 @@
+import { collectAnalytics } from "@/app/lib/analytics";
 import { handleApiError } from "@/app/lib/handleError";
 import { handleApiResponse } from "@/app/lib/handleResponse";
 import { HttpStatus } from "@/app/lib/httpStatus";
 import { prisma } from "@/app/lib/prisma";
 import { unlockUrl } from "@/app/lib/validators/url";
-import { collectAnalytics } from "@/app/lib/analytics";
 import { NextRequest } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -21,6 +21,9 @@ export async function POST(request: NextRequest) {
     const urlRecord = await prisma.url.findUnique({
       where: {
         shortCode: slug,
+        password: {
+          not: null,
+        },
       },
       select: {
         id: true,
@@ -33,7 +36,10 @@ export async function POST(request: NextRequest) {
     });
 
     if (!urlRecord) {
-      return handleApiResponse(HttpStatus.NOT_FOUND, "slug is invalid");
+      return handleApiResponse(
+        HttpStatus.NOT_FOUND,
+        "slug is invalid or password not required redirecting....",
+      );
     }
 
     if (urlRecord.expiresAt && urlRecord.expiresAt < new Date()) {

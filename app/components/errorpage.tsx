@@ -8,7 +8,7 @@ import Footer from "./ui/footer";
 import ErrorHeader from "./errorHeader";
 
 interface errorpageTypes {
-  type: "notfound" | "expired" | "maxclicks";
+  type: "notfound" | "expired" | "maxclicks" | "NotfoundPage";
   code: string;
 }
 
@@ -57,6 +57,16 @@ export default function Errorpage({ type, code }: errorpageTypes) {
               </div>
               <div className="font-serif text-5xl text-muted-foreground">
                 Link not found
+              </div>
+            </>
+          )}
+          {type === "NotfoundPage" && (
+            <>
+              <div className="font-serif text-5xl mt-4 text-muted-foreground italic">
+                404
+              </div>
+              <div className="font-serif text-5xl text-muted-foreground">
+                this is an invalid route redirecting...
               </div>
             </>
           )}
