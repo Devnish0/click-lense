@@ -1,30 +1,28 @@
 "use client";
 
-import { DEPLOYMENT_URL } from "@/lib/constant";
-import { cn } from "@/lib/utils";
-import QRCodeCard from "@/app/lib/qrgenerator";
-import { useEffect, useRef, useState, type MouseEvent } from "react";
 import formatRelativeDate from "@/app/lib/dateFormatter";
+import QRCodeCard from "@/app/lib/qrgenerator";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { DEPLOYMENT_URL } from "@/lib/constant";
+import { cn } from "@/lib/utils";
 import {
+  ChartColumn,
   Clock,
-  ClosedCaption,
   Copy,
-  Cross,
   Download,
   ExternalLink,
   Lock,
-  Pen,
   QrCode,
   X,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState, type MouseEvent } from "react";
 
 export interface InputLinkData {
   shortcode: string;
@@ -332,11 +330,12 @@ export default function LinkComponent({
                 className={Password ? "text-primary" : "text-secondary/50"}
               />
               <Link
-                href="/"
+                href={`/workspace/analytics/${cleanCode}`}
                 onClick={(e) => e.stopPropagation()}
                 className="inline-flex items-center justify-center pl-3 pr-3 pt-2 pb-2 rounded-lg border border-border/70 bg-primary text-primary-foreground hover:bg-primary/90 focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background cursor-pointer"
               >
-                <Pen size={19} />
+                {/* <Pencil size={19} /> */}
+                <ChartColumn size={19} />
               </Link>
             </span>
           </div>

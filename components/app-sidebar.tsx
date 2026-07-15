@@ -2,61 +2,66 @@
 
 import * as React from "react";
 
+import { authClient } from "@/app/lib/auth-client";
 import { ThemeToggle } from "@/app/theme-toggle";
-import { usePathname } from "next/navigation";
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
-  SidebarFooter,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import {
-  DashboardSquareIcon,
-  LayoutBottomIcon,
-  PlusSignIcon,
-  Setting07Icon,
-} from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { NAME } from "@/lib/constant";
+import { LayoutDashboard, Plus, Settings } from "lucide-react";
+import { usePathname } from "next/navigation";
 
-const data = {
-  navMain: [
-    {
-      items: [
-        {
-          title: "Dashboard",
-          url: "/workspace/dashboard",
-          icon: DashboardSquareIcon,
-          aliases: ["/dashboard"],
-        },
-        {
-          title: "Create",
-          url: "/workspace/create",
-          icon: PlusSignIcon,
-        },
-        {
-          title: "Settings",
-          url: "/workspace/settings",
-          icon: Setting07Icon,
-        },
-      ],
-      title: "Workspace",
-    },
-  ],
-};
-function isActivePath(
-  pathname: string,
-  item: (typeof data.navMain)[number]["items"][number],
-) {
+interface NavItem {
+  title: string;
+  url: string;
+  icon: React.ElementType;
+  aliases?: string[];
+}
+
+const mainNav: NavItem[] = [
+  {
+    title: "Dashboard",
+    url: "/workspace/dashboard",
+    icon: LayoutDashboard,
+    aliases: ["/dashboard"],
+  },
+  {
+    title: "Create",
+    url: "/workspace/create",
+    icon: Plus,
+  },
+  // {
+  //   title: "Analytics",
+  //   url: "/workspace/analytics",
+  //   icon: BarChart3,
+  // },
+  // {
+  //   title: "QR Codes",
+  //   url: "/workspace/qr",
+  //   icon: QrCode,
+  // },
+];
+
+const settingsNav: NavItem[] = [
+  {
+    title: "Settings",
+    url: "/workspace/settings",
+    icon: Settings,
+  },
+];
+
+function isActivePath(pathname: string, item: NavItem) {
   const paths = [item.url, ...(item.aliases ?? [])];
-
   return paths.some(
     (path) => pathname === path || pathname.startsWith(`${path}/`),
   );
@@ -64,57 +69,96 @@ function isActivePath(
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname();
+  const { data: session } = authClient.useSession();
 
   return (
     <Sidebar {...props}>
       <SidebarHeader>
-        {/* <VersionSwitcher
-          versions={data.versions}
-          defaultVersion={data.versions[0]}
-        /> */}
-        <div className="data-open:bg-sidebar-accent data-open:text-sidebar-accent-foreground flex gap-2">
-          <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-            <HugeiconsIcon
-              icon={LayoutBottomIcon}
-              strokeWidth={2}
-              className="size-4"
-            />
+        <div className="flex gap-2.5 px-1 py-1">
+          <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold text-sm">
+            {NAME.charAt(0)}
           </div>
-          <div className="flex flex-col gap-0.5 leading-none">
-            <span className="font-medium">{NAME}</span>
-            <span className="text-xs">v1.2.3</span>
+          <div className="flex flex-col gap-0 leading-none">
+            <span className="font-semibold text-sm">{NAME}</span>
+            <span className="text-[11px] text-muted-foreground">
+              URL Shortener
+            </span>
           </div>
         </div>
       </SidebarHeader>
+
       <SidebarContent>
-        {data.navMain.map((item) => (
-          <SidebarGroup key={item.title}>
-            <SidebarGroupLabel>{item.title}</SidebarGroupLabel>
+        <SidebarGroup>
+          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {mainNav.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton
+                    isActive={isActivePath(pathname, item)}
+                    render={<a href={item.url} />}
+                  >
+                    <item.icon className="size-4" />
+                    {item.title}
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup>
+          <SidebarGroupLabel>Account</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {settingsNav.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton
+                    isActive={isActivePath(pathname, item)}
+                    render={<a href={item.url} />}
+                  >
+                    <item.icon className="size-4" />
+                    {item.title}
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+
+      <SidebarFooter>
+        {/* User profile */}
+        {session?.user && (
+          <SidebarGroup>
             <SidebarGroupContent>
-              <SidebarMenu>
-                {item.items.map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton
-                      isActive={isActivePath(pathname, item)}
-                      render={<a href={item.url} />}
-                    >
-                      <HugeiconsIcon
-                        icon={item.icon}
-                        strokeWidth={2}
-                        className="size-4"
-                      />
-                      {item.title}
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
+              <div className="flex items-center gap-2.5 px-2 py-1.5">
+                {session.user.image ? (
+                  <img
+                    src={session.user.image}
+                    alt={session.user.name || "User"}
+                    className="size-7 rounded-full object-cover ring-1 ring-border"
+                  />
+                ) : (
+                  <div className="flex size-7 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
+                    {session.user.name?.charAt(0)?.toUpperCase() || "U"}
+                  </div>
+                )}
+                <div className="flex flex-col min-w-0">
+                  <span className="text-xs font-medium truncate">
+                    {session.user.name}
+                  </span>
+                  <span className="text-[10px] text-muted-foreground truncate">
+                    {session.user.email}
+                  </span>
+                </div>
+              </div>
             </SidebarGroupContent>
           </SidebarGroup>
-        ))}
-      </SidebarContent>
-      <SidebarFooter>
+        )}
+
+        {/* Theme toggle */}
         <SidebarGroup>
-          <SidebarGroupLabel>Theme switcher</SidebarGroupLabel>
           <SidebarGroupContent>
             <ThemeToggle />
           </SidebarGroupContent>
