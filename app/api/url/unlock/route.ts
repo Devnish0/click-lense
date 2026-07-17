@@ -16,7 +16,9 @@ export async function POST(request: NextRequest) {
         "there is a problem in working with this request",
       );
     }
-    const { Password, slug } = validateData.data;
+    const { Password, slug, ref } = validateData.data;
+
+    console.log("ref", ref);
 
     const urlRecord = await prisma.url.findUnique({
       where: {
@@ -68,6 +70,9 @@ export async function POST(request: NextRequest) {
     // Password was correct - log click analytics and increment clicks
     const analytics = collectAnalytics(request);
 
+    // Override the API request referrer (which points to the /unlock page) with the actual original referrer
+    analytics.referrer = ref && ref !== "undefined" ? ref : undefined;
+    console.log(analytics);
     const [updatedUrl] = await prisma.$transaction([
       prisma.url.update({
         where: { shortCode: slug },

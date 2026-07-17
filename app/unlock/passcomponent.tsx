@@ -18,7 +18,13 @@ import Link from "next/link";
 import { useState } from "react";
 import { unlockUrl } from "../lib/validators/url";
 
-export default function PassComponent({ slug }: { slug: string }) {
+export default function PassComponent({
+  slug,
+  refer,
+}: {
+  slug: string;
+  refer: string;
+}) {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -32,6 +38,7 @@ export default function PassComponent({ slug }: { slug: string }) {
       const finalObject: unlockUrl = {
         Password: password,
         slug: slug,
+        ref: refer || "",
       };
       const response = await axios.post("/api/url/unlock", finalObject);
       const { success, data, message } = response.data;

@@ -1,16 +1,16 @@
-import { NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
-import { HttpStatus } from "../lib/httpStatus";
-import { handleApiResponse } from "../lib/handleResponse";
-import { handleApiError } from "../lib/handleError";
+import { NextResponse } from "next/server";
 import { collectAnalytics } from "../lib/analytics";
-import { notFound } from "next/navigation";
+import { handleApiError } from "../lib/handleError";
 
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ shortcode: string }> },
 ) {
   try {
+    const headers = request.headers;
+    const refer = headers.get("referer") || undefined;
+
     const { shortcode } = await params;
     const url = await prisma.url.findUnique({
       where: {
@@ -36,9 +36,13 @@ export async function GET(
     }
 
     if (url.password) {
-      return NextResponse.redirect(
-        new URL(`/unlock?code=${shortcode}`, request.url),
-      );
+      // console.log("request.url from [shortcode] route", request.url);
+      const redirectUrl = new URL("/unlock", request.url);
+      redirectUrl.searchParams.set("code", shortcode);
+      if (refer) {
+        redirectUrl.searchParams.set("ref", refer);
+      }
+      return NextResponse.redirect(redirectUrl);
     }
 
     if (url.maxClicks && url.maxClicks <= url.clicks) {

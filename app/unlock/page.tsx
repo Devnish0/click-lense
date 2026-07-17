@@ -1,16 +1,18 @@
-import { NAME } from "@/lib/constant";
-import Logo from "../components/logo";
+import { SearchParams } from "next/dist/server/request/search-params";
 import Link from "next/link";
+import ErrorHeader from "../components/errorHeader";
+import Logo from "../components/logo";
 import Footer from "../components/ui/footer";
 import PassComponent from "./passcomponent";
-import ErrorHeader from "../components/errorHeader";
 
 export default async function ExpiredPage({
   searchParams,
 }: {
-  searchParams: Promise<{ code: string }>;
+  searchParams: Promise<SearchParams>;
 }) {
-  const code = (await searchParams).code;
+  const resolved = await searchParams;
+  const code = typeof resolved.code === "string" ? resolved.code : "";
+  const ref = typeof resolved.ref === "string" ? resolved.ref : "";
 
   return (
     <>
@@ -25,7 +27,7 @@ export default async function ExpiredPage({
               :{code}
             </div>
           </>
-          <PassComponent slug={code} />
+          <PassComponent slug={code} refer={ref} />
         </div>
       </main>
 

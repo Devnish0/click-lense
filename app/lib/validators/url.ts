@@ -1,4 +1,4 @@
-import z, { coerce } from "zod";
+import z from "zod";
 
 export const createUrlSchema = z.object({
   userId: z.string(),
@@ -33,6 +33,7 @@ export type slugCheck = z.infer<typeof slugCheck>;
 export const unlockUrl = z.object({
   slug: z.string(),
   Password: z.string(),
+  ref: z.string(),
 });
 
 export type unlockUrl = z.infer<typeof unlockUrl>;
