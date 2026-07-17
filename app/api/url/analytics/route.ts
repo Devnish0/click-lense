@@ -10,7 +10,7 @@ export async function GET(request: Request) {
     if (!session?.session?.id) {
       return handleApiResponse(
         HttpStatus.UNAUTHORIZED,
-        "Please login to view analytics"
+        "Please login to view analytics",
       );
     }
 
@@ -127,7 +127,9 @@ export async function GET(request: Request) {
       });
 
     // Unique visitors (by ipHash — not available in this query, so approximate by counting unique click events)
-    const uniqueClicks = new Set(clicks.map((c) => `${c.browser}-${c.os}-${c.device}-${c.country}`)).size;
+    const uniqueClicks = new Set(
+      clicks.map((c) => `${c.browser}-${c.os}-${c.device}-${c.country}`),
+    ).size;
 
     const analytics = {
       link: {

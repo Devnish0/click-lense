@@ -1,13 +1,15 @@
+import { auth } from "@/app/lib/auth";
+import { handleApiError } from "@/app/lib/handleError";
+import { handleApiResponse } from "@/app/lib/handleResponse";
+import { HttpStatus } from "@/app/lib/httpStatus";
+import { prisma } from "@/app/lib/prisma";
 import {
   createUrlSchema,
   deleteUrlSchema,
   updateUrlSchema,
 } from "@/app/lib/validators/url";
-import { prisma } from "@/app/lib/prisma";
-import { HttpStatus } from "@/app/lib/httpStatus";
-import { handleApiError } from "@/app/lib/handleError";
-import { handleApiResponse } from "@/app/lib/handleResponse";
-import { auth } from "@/app/lib/auth";
+import { revalidateTag } from "next/cache";
+import { getAllUrls } from "../(functions)/urlfunctions";
 
 export async function POST(request: Request) {
   try {
@@ -47,6 +49,7 @@ export async function POST(request: Request) {
         maxClicks: validateData?.maxClicks,
       },
     });
+    revalidateTag(`url-${session?.session?.userId}`, "max");
     return handleApiResponse(HttpStatus.CREATED, "url created successfully", {
       url,
     });
@@ -65,20 +68,8 @@ export async function GET(request: Request) {
         "Please login to view your URLs",
       );
     }
-    const userUrls = await prisma.url.findMany({
-      where: {
-        userId: session?.session?.userId,
-      },
-      select:{
-        shortCode:true,
-        originalUrl:true,
-        password:true,
-        createdAt:true
-      },
-      orderBy:{
-        createdAt:"desc"
-      }
-    });
+    const userUrls = await getAllUrls(session?.session?.userId);
+
     return handleApiResponse(HttpStatus.OK, "success", { userUrls });
   } catch (error) {
     return handleApiError(error);
@@ -108,6 +99,8 @@ export async function DELETE(request: Request) {
           id: true,
         },
       });
+      revalidateTag(`url-${session?.session?.userId}`, "max");
+
       return handleApiResponse(HttpStatus.OK, "url deleted successfully", {
         deletedUserUrl,
       });
@@ -138,6 +131,8 @@ export async function PATCH(request: Request) {
           shortCode: validateData.slug,
         },
       });
+      revalidateTag(`url-${session?.session?.userId}`, "max");
+
       return handleApiResponse(HttpStatus.OK, "url updated successfully", {
         updatedUserUrl,
       });
