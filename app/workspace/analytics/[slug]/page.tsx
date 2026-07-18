@@ -46,6 +46,7 @@ import {
   YAxis,
 } from "recharts";
 
+import Errorpage from "@/app/components/errorpage";
 import formatRelativeDate from "@/app/lib/dateFormatter";
 import { cn } from "@/lib/utils";
 import {
@@ -329,27 +330,7 @@ export default function LinkAnalyticsPage() {
   // ── Error state ───────────────────────────────────────────────────────────
 
   if (error) {
-    return (
-      <div className="w-full min-h-[calc(100vh-4rem)] flex items-center justify-center px-4">
-        <Card className="p-8 text-center max-w-md border-border/50 bg-card">
-          <div className="flex size-14 items-center justify-center rounded-2xl bg-destructive/10 mx-auto mb-4">
-            <LinkIcon className="size-6 text-destructive" />
-          </div>
-          <h2 className="text-lg font-semibold">{error}</h2>
-          <p className="mt-1 text-sm text-muted-foreground">
-            The link might not exist or you don't have access to its stats.
-          </p>
-          <Button
-            variant="outline"
-            className="mt-5 cursor-pointer rounded-xl"
-            onClick={() => router.push("/workspace/dashboard")}
-          >
-            <ArrowLeft className="size-4 mr-1.5" />
-            Back to Dashboard
-          </Button>
-        </Card>
-      </div>
-    );
+    return <Errorpage type="notfound" code="Analytics not found" />;
   }
 
   // ── Loading state ─────────────────────────────────────────────────────────
@@ -439,7 +420,8 @@ export default function LinkAnalyticsPage() {
                   {data.link.expiresAt && (
                     <Badge variant="outline">
                       <Clock className="size-3 mr-1" />
-                      Expires {formatRelativeDate(data.link.expiresAt)}
+                      Expires {formatRelativeDate(data.link.expiresAt)}{" "}
+                      {/* //Expires -168 hours ag */}
                     </Badge>
                   )}
                 </div>

@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 
 export function middleware(request: NextRequest) {
   const sessionToken =
@@ -10,7 +10,7 @@ export function middleware(request: NextRequest) {
 
   if (pathname.startsWith("/workspace")) {
     if (!sessionToken) {
-      return NextResponse.redirect(new URL("/", request.url));
+      return NextResponse.redirect(new URL("/login", request.url));
     }
   }
 

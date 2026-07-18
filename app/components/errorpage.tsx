@@ -1,11 +1,11 @@
 "use client";
-import { NAME } from "@/lib/constant";
-import Logo from "./logo";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { use, useEffect, useState } from "react";
-import Footer from "./ui/footer";
+import { NAME } from "@/lib/constant";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 import ErrorHeader from "./errorHeader";
+import Logo from "./logo";
+import Footer from "./ui/footer";
 
 interface errorpageTypes {
   type: "notfound" | "expired" | "maxclicks" | "NotfoundPage";
@@ -26,7 +26,7 @@ export default function Errorpage({ type, code }: errorpageTypes) {
       });
     }, 1000);
     if (count == 0) {
-      window.location.href = "/workspace/dashboard";
+      window.location.href = "/";
     }
     return () => clearInterval(timer);
   }, [count]);
@@ -45,7 +45,7 @@ export default function Errorpage({ type, code }: errorpageTypes) {
               <div className="font-serif text-5xl mt-4 text-muted-foreground italic">
                 {code}
               </div>
-              <div className="font-serif text-5xl text-muted-foreground">
+              <div className="font-serif txt-5xl text-muted-foreground">
                 Link expired
               </div>
             </>

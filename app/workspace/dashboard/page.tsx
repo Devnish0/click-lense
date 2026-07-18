@@ -1,6 +1,7 @@
 "use client";
 // import LinkComponent from "@/components/linkcomponent";
 import { createUrlSchemaClient } from "@/app/lib/validators/clientValidators.ts/url";
+import EmptyUrls from "@/components/empty-urls";
 import { InputInline } from "@/components/form/inputinline";
 import LinkComponent from "@/components/linkcomponent";
 import { normalizeUrl } from "@/components/search";
@@ -146,19 +147,24 @@ export default function Page() {
               Shorten
             </Button>
           </div>
-          <div className="mt-3 pl-1 font-extralight text-xs text-secondary/70">
-            Projects
-          </div>
           {loading ? (
-            <div className="w-full border rounded-sm mt-3 border-border/70 divide-y divide-border/70">
-              <LinkSkeleton />
-              <LinkSkeleton />
-              <LinkSkeleton />
-            </div>
+            <>
+              <div className="mt-3 pl-1 font-extralight text-xs text-secondary/70">
+                Projects
+              </div>
+              <div className="w-full border rounded-sm mt-3 border-border/70 divide-y divide-border/70">
+                <LinkSkeleton key="sk-1" />
+                <LinkSkeleton key="sk-2" />
+                <LinkSkeleton key="sk-3" />
+              </div>
+            </>
           ) : userUrls.length > 0 ? (
-            <div className="w-full border rounded-sm mt-3 border-border/70 ">
-              {userUrls.map((link: userUrl) => {
-                return (
+            <>
+              <div className="mt-3 pl-1 font-extralight text-xs text-secondary/70">
+                Projects
+              </div>
+              <div className="w-full border-x  border-t rounded-sm mt-3 border-border/70 ">
+                {userUrls.map((link: userUrl) => (
                   <LinkComponent
                     key={link.shortCode}
                     Password={!!link.password}
@@ -166,15 +172,11 @@ export default function Page() {
                     originalURL={link.originalUrl}
                     shortcode={link.shortCode}
                   />
-                );
-              })}
-            </div>
+                ))}
+              </div>
+            </>
           ) : (
-            // </div>
-
-            <div className="w-full flex items-center justify-center grow pb-30">
-              <p className="text-secondary/50">create your first url</p>
-            </div>
+            <EmptyUrls />
           )}
 
           <div className=""></div>

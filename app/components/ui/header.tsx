@@ -22,10 +22,6 @@ export default function Header() {
             <span className="text-primary">.</span>
           </span>
         </div>
-        <div className="flex items-center gap-3">
-          <ThemeToggle />
-        </div>
-
         {/* Desktop Navigation Links */}
         <nav className="hidden lg:flex items-center gap-8">
           <ul className="flex items-center gap-8 text-[0.95rem] font-medium text-secondary">
@@ -39,18 +35,18 @@ export default function Header() {
             </li>
             <li>
               <a
-                href="#project"
+                href="#features"
                 className="transition-colors hover:text-primary"
               >
-                project
+                features
               </a>
             </li>
             <li>
               <a
-                href="#basics"
+                href="#security"
                 className="transition-colors hover:text-primary"
               >
-                basics
+                security
               </a>
             </li>
           </ul>
@@ -58,6 +54,7 @@ export default function Header() {
 
         {/* Desktop Action Buttons */}
         <div className="hidden lg:flex items-center gap-3">
+          <ThemeToggle />
           <Link
             href="/login"
             className={cn(
@@ -78,17 +75,20 @@ export default function Header() {
           </Link>
         </div>
 
-        {/* Mobile Hamburger Button */}
-        <Link
-          href="/login"
-          onClick={() => setIsOpen(false)}
-          className={cn(
-            buttonVariants({ variant: "default", size: "icon-sm" }),
-            "lg:hidden bg-primary text-primary-foreground hover:bg-primary/90 font-semibold py-2 cursor-pointer",
-          )}
-        >
-          <MoveRight />
-        </Link>
+        {/* Mobile Right Action Group */}
+        <div className="flex items-center gap-2 lg:hidden">
+          <ThemeToggle />
+          <Link
+            href="/login"
+            onClick={() => setIsOpen(false)}
+            className={cn(
+              buttonVariants({ variant: "default", size: "icon-sm" }),
+              "bg-primary text-primary-foreground hover:bg-primary/90 font-semibold py-2 cursor-pointer",
+            )}
+          >
+            <MoveRight />
+          </Link>
+        </div>
         <button
           onClick={() => setIsOpen(!isOpen)}
           type="button"
@@ -148,18 +148,18 @@ export default function Header() {
               solutions
             </a>
             <a
-              href="#project"
+              href="#features"
               onClick={() => setIsOpen(false)}
               className="text-lg font-medium text-secondary hover:text-primary transition-colors py-2 border-b border-border/45"
             >
-              project
+              features
             </a>
             <a
-              href="#basics"
+              href="#security"
               onClick={() => setIsOpen(false)}
               className="text-lg font-medium text-secondary hover:text-primary transition-colors py-2 border-b border-border/45"
             >
-              basics
+              security
             </a>
           </nav>
           <div className="flex flex-col gap-3">
