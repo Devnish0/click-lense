@@ -284,7 +284,7 @@ export default function Page() {
           className="max-w-7xl mx-auto px-4 sm:px-6 scroll-mt-24"
         >
           <div className="text-center space-y-4 mb-14">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/20 border border-accent/40 text-accent-foreground text-xs font-semibold uppercase tracking-widest">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-semibold uppercase tracking-widest">
               <Layers className="size-3.5" /> Core Features
             </div>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-foreground font-sans">

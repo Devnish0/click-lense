@@ -1,11 +1,18 @@
 "use client";
 
-import { useState } from "react";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { ArrowUpRight, ChevronRight, Link2, Lock, QrCode, Sparkles } from "lucide-react";
-import Link from "next/link";
 import { cn } from "@/lib/utils";
+import {
+  ArrowUpRight,
+  ChevronRight,
+  Link2,
+  Lock,
+  QrCode,
+  Sparkles,
+} from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function Hero() {
   const [urlInput, setUrlInput] = useState("");
@@ -14,7 +21,9 @@ export default function Hero() {
   const handleShorten = (e: React.FormEvent) => {
     e.preventDefault();
     if (!urlInput) return;
-    const targetUrl = urlInput.startsWith("http") ? urlInput : `https://${urlInput}`;
+    const targetUrl = urlInput.startsWith("http")
+      ? urlInput
+      : `https://${urlInput}`;
     router.push(`/workspace/create?url=${encodeURIComponent(targetUrl)}`);
   };
 
@@ -23,9 +32,11 @@ export default function Hero() {
       {/* Top Badge */}
       <div className="mt-8 mb-6 flex max-w-full items-center gap-2 rounded-full border border-border/70 bg-card/80 px-3.5 py-1.5 font-sans text-xs font-semibold text-foreground shadow-sm backdrop-blur supports-backdrop-filter:bg-card/70">
         <span className="flex size-5 items-center justify-center rounded-full bg-primary text-[10px] font-black text-primary-foreground shadow-sm">
-          <Sparkles className="size-3 text-accent" />
+          <Sparkles className="size-3 " />
         </span>
-        <span className="text-secondary">Share smarter. Track everything in real-time</span>
+        <span className="text-secondary">
+          Share smarter. Track everything in real-time
+        </span>
       </div>
 
       {/* Main Headline */}
@@ -39,7 +50,9 @@ export default function Hero() {
 
       {/* Description */}
       <p className="mt-6 text-center max-w-xl lg:max-w-2xl text-sm lg:text-lg text-muted-foreground leading-relaxed">
-        Shorten long links, generate custom branded aliases, create high-res QR codes, and track detailed click metrics, visitor countries, devices, and traffic referrers from one sleek dashboard.
+        Shorten long links, generate custom branded aliases, create high-res QR
+        codes, and track detailed click metrics, visitor countries, devices, and
+        traffic referrers from one sleek dashboard.
       </p>
 
       {/* Interactive Quick-Shorten Input */}
@@ -79,7 +92,7 @@ export default function Hero() {
           <span>QR Code Generator</span>
         </div>
         <div className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-muted/40 border border-border/40">
-          <Sparkles className="size-3.5 text-accent-foreground" />
+          <Sparkles className="size-3.5 text-primary" />
           <span>Detailed Analytics</span>
         </div>
       </div>
@@ -90,7 +103,7 @@ export default function Hero() {
           href="/login"
           className={cn(
             buttonVariants({ variant: "default", size: "lg" }),
-            "py-6 px-8 rounded-xl font-semibold cursor-pointer shadow-md bg-primary text-primary-foreground hover:bg-primary/90 transition-all"
+            "py-6 px-8 rounded-xl font-semibold cursor-pointer shadow-md bg-primary text-primary-foreground hover:bg-primary/90 transition-all",
           )}
         >
           Get Started for Free <ArrowUpRight className="size-4 ml-1" />
@@ -99,7 +112,7 @@ export default function Hero() {
           href="#solutions"
           className={cn(
             buttonVariants({ variant: "outline", size: "lg" }),
-            "py-6 px-8 rounded-xl font-semibold cursor-pointer border-2 border-border bg-card/80 hover:bg-muted text-foreground transition-all"
+            "py-6 px-8 rounded-xl font-semibold cursor-pointer border-2 border-border bg-card/80 hover:bg-muted text-foreground transition-all",
           )}
         >
           View Live Demo <ChevronRight className="size-4 ml-1" />
