@@ -3,6 +3,21 @@
 import { Card } from "@/components/ui/card";
 import type { TopStatItem } from "./types";
 
+function truncateMiddle(text: string, maxLength: number) {
+  if (text.length <= maxLength) return text;
+
+  if (text.includes("/")) {
+    const d = text.split("/");
+    return d[2];
+  }
+
+  const charsToShow = maxLength - 1;
+  const frontLen = Math.ceil(charsToShow / 2);
+  const backLen = Math.floor(charsToShow / 2);
+
+  return text.substr(0, frontLen) + "…" + text.substr(text.length - backLen);
+}
+
 function ProgressBar({ percentage }: { percentage: number }) {
   return (
     <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted/70">
@@ -22,15 +37,17 @@ export function TopStatsCard({
   items: TopStatItem[];
 }) {
   return (
-    <Card className="border-border/50 p-5">
-      <h3 className="text-sm font-medium text-muted-foreground">{title}</h3>
-      <div className="mt-4 flex flex-col gap-3.5">
+    <Card className="border-border/50 p-3">
+      {/* <h3 className="text-sm font-medium text-muted-foreground">{title}</h3> */}
+      <div className="flex flex-col gap-3.5">
         {items.map((item) => (
           <div key={item.name} className="flex flex-col gap-1.5">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">{item.name}</span>
+              <span className="text-sm font-medium w-full truncate">
+                {truncateMiddle(item.name, 30)}
+              </span>
               <div className="flex items-center gap-2">
-                <span className="text-xs text-muted-foreground">
+                <span className="text-xs text-muted-foreground ">
                   {item.value.toLocaleString()}
                 </span>
                 <span className="text-[11px] font-medium tabular-nums text-muted-foreground">

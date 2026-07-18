@@ -2,10 +2,10 @@ import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import {
   Calendar,
+  Compass,
   Laptop,
   Globe as LucideGlobe,
   Share2,
-  Compass,
 } from "lucide-react";
 export default function AnalyticsComponent({
   analyticsEnabled,
@@ -18,7 +18,7 @@ export default function AnalyticsComponent({
         className={cn(
           "w-full mb-2 overflow-hidden transition-all duration-300 border border-border/80 bg-card/60 backdrop-blur-md shadow-sm rounded-xl p-5",
           !analyticsEnabled &&
-            "opacity-40 pointer-events-none select-none filter grayscale-[30%]",
+            "opacity-40 pointer-events-none select-none filter grayscale-30",
         )}
       >
         <div className="flex items-center justify-between mb-5">

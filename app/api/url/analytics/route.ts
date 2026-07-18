@@ -1,8 +1,8 @@
-import { handleApiResponse } from "@/app/lib/handleResponse";
+import { auth } from "@/app/lib/auth";
 import { handleApiError } from "@/app/lib/handleError";
+import { handleApiResponse } from "@/app/lib/handleResponse";
 import { HttpStatus } from "@/app/lib/httpStatus";
 import { prisma } from "@/app/lib/prisma";
-import { auth } from "@/app/lib/auth";
 
 export async function GET(request: Request) {
   try {

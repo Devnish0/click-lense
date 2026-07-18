@@ -49,7 +49,7 @@ import {
 
 // ── Types for API response ───────────────────────────────────────────────────
 
-interface LinkAnalytics {
+export interface LinkAnalytics {
   link: {
     id: string;
     shortCode: string;
@@ -108,45 +108,24 @@ function CustomTooltip({
 
 function RecentClickRow({
   click,
+  index,
 }: {
   click: LinkAnalytics["recentClicks"][number];
+  index: number;
 }) {
   return (
-    <div className="flex items-center justify-between py-2.5 px-1 border-b border-border/40 last:border-0">
-      <div className="flex items-center gap-3 min-w-0">
-        <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10">
-          <MousePointerClick className="size-3.5 text-primary" />
-        </div>
-        <div className="flex flex-col min-w-0 animate-fade-in">
-          <div className="flex items-center gap-2 text-sm">
-            <span className="font-medium text-foreground">
-              {click.browser || "Unknown"}
-            </span>
-            <span className="text-muted-foreground text-xs">on</span>
-            <span className="font-medium text-foreground">
-              {click.os || "Unknown"}
-            </span>
-          </div>
-          <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-0.5">
-            {click.country && <span>{click.country}</span>}
-            {click.device && (
-              <>
-                <span>·</span>
-                <span>{click.device}</span>
-              </>
-            )}
-            {click.referrer && click.referrer !== "Direct" && (
-              <>
-                <span>·</span>
-                <span className="truncate max-w-[120px]">{click.referrer}</span>
-              </>
-            )}
-          </div>
-        </div>
-      </div>
-      <span className="text-[11px] text-muted-foreground shrink-0 ml-2">
+    <div className="grid grid-cols-[60px_180px_140px_140px_120px_120px_1fr] lg:grid-cols-[60px_1.8fr_1.2fr_1.2fr_1fr_1fr_2fr] items-center px-4 py-3 text-xs text-foreground border-b border-border/40 last:border-0 hover:bg-muted/30 transition-colors">
+      <div className="font-mono text-muted-foreground">#{index + 1}</div>
+      <div className="text-muted-foreground whitespace-nowrap">
         {formatRelativeDate(click.createdAt)}
-      </span>
+      </div>
+      <div className="font-medium truncate">{click.browser || "Unknown"}</div>
+      <div className="truncate">{click.os || "Unknown"}</div>
+      <div className="truncate">{click.device || "Unknown"}</div>
+      <div className="truncate">{click.country || "Unknown"}</div>
+      <div className="truncate text-muted-foreground">
+        {click.referrer || "Direct"}
+      </div>
     </div>
   );
 }
@@ -533,69 +512,105 @@ export default function LinkAnalyticsPage() {
 
         {/* ── Top Stats Grid ───────────────────────────────────────────── */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4 mb-8">
-          <TopStatsCard
-            title="Countries"
-            items={
-              data.topCountries.length > 0
-                ? data.topCountries
-                : [{ name: "No data yet", value: 0, percentage: 0 }]
-            }
-          />
-          <TopStatsCard
-            title="Devices"
-            items={
-              data.topDevices.length > 0
-                ? data.topDevices
-                : [{ name: "No data yet", value: 0, percentage: 0 }]
-            }
-          />
-          <TopStatsCard
-            title="Browsers"
-            items={
-              data.topBrowsers.length > 0
-                ? data.topBrowsers
-                : [{ name: "No data yet", value: 0, percentage: 0 }]
-            }
-          />
-          <TopStatsCard
-            title="Referrers"
-            items={
-              data.topReferrers.length > 0
-                ? data.topReferrers
-                : [{ name: "No data yet", value: 0, percentage: 0 }]
-            }
-          />
+          <div>
+            <h3 className="text-sm font-medium text-foreground mb-3 ml-2">
+              Countries
+            </h3>
+            <TopStatsCard
+              title="Countries"
+              items={
+                data.topCountries.length > 0
+                  ? data.topCountries
+                  : [{ name: "No data yet", value: 0, percentage: 0 }]
+              }
+            />
+          </div>
+          <div>
+            <h3 className="text-sm font-medium text-foreground mb-3 ml-2">
+              Devices
+            </h3>
+            <TopStatsCard
+              title="Devices"
+              items={
+                data.topDevices.length > 0
+                  ? data.topDevices
+                  : [{ name: "No data yet", value: 0, percentage: 0 }]
+              }
+            />
+          </div>
+          <div>
+            <h3 className="text-sm font-medium text-foreground mb-3 ml-2">
+              Browsers
+            </h3>
+            <TopStatsCard
+              title="Browsers"
+              items={
+                data.topBrowsers.length > 0
+                  ? data.topBrowsers
+                  : [{ name: "No data yet", value: 0, percentage: 0 }]
+              }
+            />
+          </div>
+          <div>
+            <h3 className="text-sm font-medium text-foreground mb-3 ml-2">
+              Referrers
+            </h3>
+            <TopStatsCard
+              title="Referrers"
+              items={
+                data.topReferrers.length > 0
+                  ? data.topReferrers
+                  : [{ name: "No data yet", value: 0, percentage: 0 }]
+              }
+            />
+          </div>
         </div>
 
         {/* ── Recent Clicks ────────────────────────────────────────────── */}
-        <Card className="border-border/50 p-5 mb-8 bg-card shadow-sm">
-          <h3 className="text-sm font-medium text-muted-foreground">
+        <div className="mb-8">
+          <h3 className="text-sm font-medium text-foreground mb-3 ml-1">
             Recent Clicks
           </h3>
-          <p className="mt-0.5 text-lg font-semibold tracking-tight mb-4">
-            {data.recentClicks.length} events
-          </p>
+          <div className="border border-border/60 rounded-xl bg-card shadow-sm overflow-hidden">
+            {data.recentClicks.length > 0 ? (
+              <div className="w-full overflow-x-auto">
+                <div className="min-w-[890px] lg:min-w-full lg:w-full">
+                  {/* Table Header */}
+                  <div className="grid grid-cols-[60px_180px_140px_140px_120px_120px_1fr] lg:grid-cols-[60px_1.8fr_1.2fr_1.2fr_1fr_1fr_2fr] items-center px-4 py-2.5 text-xs font-semibold text-muted-foreground bg-muted/50 border-b border-border/50">
+                    <div>#</div>
+                    <div>Date</div>
+                    <div>Browser</div>
+                    <div>OS</div>
+                    <div>Device</div>
+                    <div>Country</div>
+                    <div>Referrer</div>
+                  </div>
 
-          {data.recentClicks.length > 0 ? (
-            <div className="flex flex-col">
-              {data.recentClicks.map((click) => (
-                <RecentClickRow key={click.id} click={click} />
-              ))}
-            </div>
-          ) : (
-            <div className="flex flex-col items-center justify-center py-12">
-              <div className="flex size-14 items-center justify-center rounded-2xl bg-primary/10 mb-4">
-                <MousePointerClick className="size-6 text-primary/60" />
+                  {/* Table Rows */}
+                  {data.recentClicks.map((click, index) => (
+                    <RecentClickRow
+                      key={click.id}
+                      click={click}
+                      index={index}
+                    />
+                  ))}
+                </div>
               </div>
-              <p className="text-sm text-muted-foreground">
-                No clicks recorded yet
-              </p>
-              <p className="mt-1 text-xs text-muted-foreground text-center">
-                Share your link to start seeing live analytics events.
-              </p>
-            </div>
-          )}
-        </Card>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-12">
+                <div className="flex size-14 items-center justify-center rounded-2xl bg-primary/10 mb-4">
+                  <MousePointerClick className="size-6 text-primary/60" />
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  No clicks recorded yet
+                </p>
+                <p className="mt-1 text-xs text-muted-foreground text-center">
+                  Share your link to start seeing live analytics events.
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
