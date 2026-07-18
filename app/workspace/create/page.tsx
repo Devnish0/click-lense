@@ -1,36 +1,35 @@
 "use client";
-import QRCodeCard from "@/app/lib/qrgenerator";
-import { Message } from "./types";
-import { generateRandomSlug } from "./helperfun";
-import { handlePassword, handleSlug, handleUrl } from "./handlesubmit";
 import { InputInline } from "@/components/form/inputinline";
-import { use, useEffect, useState } from "react";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { DEPLOYMENT_URL } from "@/lib/constant";
+import { cn } from "@/lib/utils";
 import {
   Date as DateIcon,
   Globe02FreeIcons,
   Link01Icon,
   LockIcon,
-  Time,
 } from "@hugeicons/core-free-icons";
-import { DEPLOYMENT_URL } from "@/lib/constant";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/utils";
+import { use, useEffect, useState } from "react";
+import { handlePassword, handleSlug, handleUrl } from "./handlesubmit";
+import { generateRandomSlug } from "./helperfun";
+import { Message } from "./types";
 
-import { normalizeUrl } from "@/components/search";
+import { authClient } from "@/app/lib/auth-client";
 import {
-  createUrlSchemaClient,
   createUrlSchema,
+  createUrlSchemaClient,
   validPassword,
   validSlug,
 } from "@/app/lib/validators/clientValidators.ts/url";
+import { normalizeUrl } from "@/components/search";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
-import { authClient } from "@/app/lib/auth-client";
-import { ArrowRight } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
-import QrCode from "./components/qrcode";
 import axios from "axios";
+import { ArrowRight } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import QrCode from "./components/qrcode";
 
 export default function Page({
   searchParams,
@@ -207,6 +206,7 @@ export default function Page({
       }
 
       // Success! Go to dashboard
+      toast.success("URL created successfully");
       router.push("/workspace/dashboard");
     } catch (err: any) {
       console.error(err);

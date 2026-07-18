@@ -24,6 +24,19 @@ import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogMedia,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
+import {
   Area,
   AreaChart,
   CartesianGrid,
@@ -45,7 +58,9 @@ import {
   Link as LinkIcon,
   Lock,
   MousePointerClick,
+  Trash2Icon,
 } from "lucide-react";
+import { toast } from "sonner";
 
 // ── Types for API response ───────────────────────────────────────────────────
 
@@ -127,6 +142,92 @@ function RecentClickRow({
         {click.referrer || "Direct"}
       </div>
     </div>
+  );
+}
+
+// dialoge box
+
+function DeleteButton({ id }: { id: string }) {
+  const router = useRouter();
+  const handleDelete = async () => {
+    try {
+      const res = await axios.delete("/api/url", { data: { id } });
+      if (res.status === 200) {
+        toast("Success!", {
+          description: "The link was deleted successfully.",
+          classNames: {
+            toast:
+              "!rounded-2xl !border-border !bg-card p-4 shadow-2xl border-1.5",
+            title: "!text-primary font-bold text-sm",
+            description:
+              "!text-foreground/90 font-normal text-xs mt-1 block leading-normal",
+            actionButton: "bg-primary text-primary-foreground",
+            cancelButton: "bg-destructive text-destructive-foreground",
+          },
+        });
+
+        router.push("/workspace/dashboard");
+      } else {
+        toast("Error", {
+          description: res.data?.message || "Failed to delete URL",
+          classNames: {
+            toast:
+              "!rounded-2xl !border-border !bg-card p-4 shadow-2xl border-1.5",
+            title: "!text-destructive font-bold text-sm",
+            description:
+              "!text-foreground/90 font-normal text-xs mt-1 block leading-normal",
+          },
+        });
+      }
+    } catch (err: any) {
+      toast("Error", {
+        description:
+          err.response?.data?.message ||
+          "An error occurred while deleting the link.",
+        classNames: {
+          toast:
+            "!rounded-2xl !border-border !bg-card p-4 shadow-2xl border-1.5",
+          title: "!text-destructive font-bold text-sm",
+          description:
+            "!text-foreground/90 font-normal text-xs mt-1 block leading-normal",
+        },
+      });
+    }
+  };
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger
+        render={
+          <Button
+            variant="destructive"
+            size="sm"
+            className="cursor-pointer gap-1.5
+            rounded-xl"
+          >
+            <Trash2Icon className="size-3.5" />
+            Delete
+          </Button>
+        }
+      />
+      <AlertDialogContent size="sm">
+        <AlertDialogHeader>
+          <AlertDialogMedia className="bg-destructive/10 text-destructive dark:bg-destructive/20 dark:text-destructive">
+            <Trash2Icon />
+          </AlertDialogMedia>
+          <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+          <AlertDialogDescription>
+            This will permanently delete this link and all the associated
+            analytics data.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel variant="outline">Cancel</AlertDialogCancel>
+          <AlertDialogAction variant="destructive" onClick={handleDelete}>
+            Delete
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }
 
@@ -375,6 +476,7 @@ export default function LinkAnalyticsPage() {
                 <ExternalLink className="size-3.5" />
                 Visit
               </Button>
+              <DeleteButton id={data.link.id} />
             </div>
           </div>
         </div>

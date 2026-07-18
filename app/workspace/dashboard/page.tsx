@@ -128,7 +128,9 @@ export default function Page() {
                 });
                 if (result.success) {
                   router.push(
-                    `/workspace/create?url=${encodeURIComponent(result.data.originalUrl)}`,
+                    `/workspace/create?url=${encodeURIComponent(
+                      result.data.originalUrl,
+                    )}`,
                   );
                 } else {
                   const message =
