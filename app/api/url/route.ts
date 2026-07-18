@@ -21,10 +21,10 @@ export async function POST(request: Request) {
       );
     }
 
-    // checking if the user is guest then we can limit the number of urls
+    // Checking if the user is guest and enforcing URL limit
     const user = await prisma.user.findUnique({
       where: {
-        id: session?.session?.userId,
+        id: session.session.userId,
       },
       select: {
         isGuest: true,
@@ -36,20 +36,28 @@ export async function POST(request: Request) {
       },
     });
 
-    const body = await request.json();
+    if (user?.isGuest && user._count.urls >= 5) {
+      return handleApiResponse(
+        HttpStatus.FORBIDDEN,
+        "Guest accounts can create up to 5 URLs. Please create a full account to shorten more links.",
+      );
+    }
 
+    const body = await request.json();
     const validateData = createUrlSchema.parse(body);
+
     const url = await prisma.url.create({
       data: {
         originalUrl: validateData.originalUrl,
         shortCode: validateData.slug,
-        userId: session?.session?.userId,
+        userId: session.session.userId,
         password: validateData?.password,
         expiresAt: validateData?.expiresAt,
         maxClicks: validateData?.maxClicks,
       },
     });
-    revalidateTag(`url-${session?.session?.userId}`, "max");
+
+    revalidateTag(`url-${session.session.userId}`, "max");
     return handleApiResponse(HttpStatus.CREATED, "url created successfully", {
       url,
     });
@@ -68,7 +76,7 @@ export async function GET(request: Request) {
         "Please login to view your URLs",
       );
     }
-    const userUrls = await getAllUrls(session?.session?.userId);
+    const userUrls = await getAllUrls(session.session.userId);
 
     return handleApiResponse(HttpStatus.OK, "success", { userUrls });
   } catch (error) {
@@ -77,8 +85,6 @@ export async function GET(request: Request) {
 }
 
 export async function DELETE(request: Request) {
-  // const cookieStore = await cookies();
-  // const token = cookieStore.get("user_demo_token");
   const session = await auth.api.getSession({ headers: request.headers });
   if (!session?.session?.id) {
     return handleApiResponse(
@@ -87,24 +93,23 @@ export async function DELETE(request: Request) {
     );
   }
   try {
-    if (session?.session?.id) {
-      const body = await request.json();
-      const validateData = deleteUrlSchema.parse(body);
-      const deletedUserUrl = await prisma.url.delete({
-        where: {
-          userId: session?.session?.userId,
-          id: validateData.id,
-        },
-        select: {
-          id: true,
-        },
-      });
-      revalidateTag(`url-${session?.session?.userId}`, "max");
+    const body = await request.json();
+    const validateData = deleteUrlSchema.parse(body);
+    const deletedUserUrl = await prisma.url.delete({
+      where: {
+        userId: session.session.userId,
+        id: validateData.id,
+      },
+      select: {
+        id: true,
+      },
+    });
 
-      return handleApiResponse(HttpStatus.OK, "url deleted successfully", {
-        deletedUserUrl,
-      });
-    }
+    revalidateTag(`url-${session.session.userId}`, "max");
+
+    return handleApiResponse(HttpStatus.OK, "url deleted successfully", {
+      deletedUserUrl,
+    });
   } catch (error) {
     return handleApiError(error);
   }
@@ -119,24 +124,23 @@ export async function PATCH(request: Request) {
     );
   }
   try {
-    if (session?.session?.id) {
-      const body = await request.json();
-      const validateData = updateUrlSchema.parse(body);
-      const updatedUserUrl = await prisma.url.update({
-        where: {
-          userId: session?.session?.userId,
-          id: validateData.id,
-        },
-        data: {
-          shortCode: validateData.slug,
-        },
-      });
-      revalidateTag(`url-${session?.session?.userId}`, "max");
+    const body = await request.json();
+    const validateData = updateUrlSchema.parse(body);
+    const updatedUserUrl = await prisma.url.update({
+      where: {
+        userId: session.session.userId,
+        id: validateData.id,
+      },
+      data: {
+        shortCode: validateData.slug,
+      },
+    });
 
-      return handleApiResponse(HttpStatus.OK, "url updated successfully", {
-        updatedUserUrl,
-      });
-    }
+    revalidateTag(`url-${session.session.userId}`, "max");
+
+    return handleApiResponse(HttpStatus.OK, "url updated successfully", {
+      updatedUserUrl,
+    });
   } catch (error) {
     return handleApiError(error);
   }

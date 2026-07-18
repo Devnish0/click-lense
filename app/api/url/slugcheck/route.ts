@@ -1,4 +1,5 @@
 import { auth } from "@/app/lib/auth";
+import { handleApiError } from "@/app/lib/handleError";
 import { handleApiResponse } from "@/app/lib/handleResponse";
 import { HttpStatus } from "@/app/lib/httpStatus";
 import { prisma } from "@/app/lib/prisma";
@@ -36,6 +37,7 @@ export async function GET(request: NextRequest) {
     return handleApiResponse(HttpStatus.OK, "Slug is available", {
       exists: false,
     });
-  } catch (error) {}
-  return NextResponse.json({ message: "slug check route" });
+  } catch (error) {
+    return handleApiError(error);
+  }
 }
