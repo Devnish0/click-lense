@@ -36,12 +36,12 @@ export async function POST(request: Request) {
       },
     });
 
-    if (user?.isGuest && user._count.urls >= 5) {
-      return handleApiResponse(
-        HttpStatus.FORBIDDEN,
-        "Guest accounts can create up to 5 URLs. Please create a full account to shorten more links.",
-      );
-    }
+    // if (user?.isGuest && user._count.urls >= 5) {
+    //   return handleApiResponse(
+    //     HttpStatus.FORBIDDEN,
+    //     "Guest accounts can create up to 5 URLs. Please create a full account to shorten more links.",
+    //   );
+    // }
 
     const body = await request.json();
     const validateData = createUrlSchema.parse(body);
