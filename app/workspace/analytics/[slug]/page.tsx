@@ -48,6 +48,7 @@ import {
 
 import Errorpage from "@/app/components/errorpage";
 import formatRelativeDate from "@/app/lib/dateFormatter";
+import { isoCountryFlag } from "@/lib/countryFlag";
 import { cn } from "@/lib/utils";
 import {
   Activity,
@@ -138,7 +139,11 @@ function RecentClickRow({
       <div className="font-medium truncate">{click.browser || "Unknown"}</div>
       <div className="truncate">{click.os || "Unknown"}</div>
       <div className="truncate">{click.device || "Unknown"}</div>
-      <div className="truncate">{click.country || "Unknown"}</div>
+      <div className="truncate">
+        {click.country
+          ? isoCountryFlag(click.country) + " " + (click.country || "Unknown")
+          : "Unknown"}
+      </div>
       <div className="truncate text-muted-foreground">
         {click.referrer || "Direct"}
       </div>
